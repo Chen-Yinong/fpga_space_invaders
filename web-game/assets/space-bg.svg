@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">
+  <defs>
+    <linearGradient id="space" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050819"/>
+      <stop offset=".45" stop-color="#0a1230"/>
+      <stop offset="1" stop-color="#170b2e"/>
+    </linearGradient>
+    <radialGradient id="nebula-left" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#246ef0" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#246ef0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebula-right" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#b34cff" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#b34cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="planet" cx="34%" cy="28%" r="68%">
+      <stop offset="0" stop-color="#81a9dc"/>
+      <stop offset=".35" stop-color="#3c659c"/>
+      <stop offset=".72" stop-color="#172849"/>
+      <stop offset="1" stop-color="#070d1b"/>
+    </radialGradient>
+    <radialGradient id="planet-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#5ee7ff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#5ee7ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#75a8ff" stroke-opacity=".055" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="960" height="640" fill="url(#space)"/>
+  <ellipse cx="170" cy="140" rx="320" ry="260" fill="url(#nebula-left)"/>
+  <ellipse cx="820" cy="500" rx="330" ry="280" fill="url(#nebula-right)"/>
+  <circle cx="846" cy="126" r="92" fill="url(#planet-glow)"/>
+  <circle cx="846" cy="126" r="52" fill="url(#planet)"/>
+  <path d="M786 115c32-18 86-21 123-2" fill="none" stroke="#9ed8ff" stroke-opacity=".28" stroke-width="3"/>
+  <rect width="960" height="640" fill="url(#grid)"/>
+  <g fill="#fff">
+    <circle cx="76" cy="84" r="1.6" opacity=".8"/><circle cx="132" cy="212" r="1" opacity=".45"/>
+    <circle cx="207" cy="72" r="1.2" opacity=".58"/><circle cx="272" cy="284" r="1.7" opacity=".72"/>
+    <circle cx="341" cy="121" r="1" opacity=".5"/><circle cx="422" cy="58" r="1.5" opacity=".8"/>
+    <circle cx="493" cy="229" r="1.1" opacity=".58"/><circle cx="567" cy="91" r="1.8" opacity=".84"/>
+    <circle cx="639" cy="304" r="1" opacity=".45"/><circle cx="704" cy="62" r="1.2" opacity=".65"/>
+    <circle cx="748" cy="238" r="1.6" opacity=".78"/><circle cx="901" cy="68" r="1.1" opacity=".55"/>
+    <circle cx="920" cy="342" r="1.5" opacity=".74"/><circle cx="42" cy="397" r="1.1" opacity=".5"/>
+    <circle cx="146" cy="474" r="1.6" opacity=".78"/><circle cx="244" cy="559" r="1" opacity=".48"/>
+    <circle cx="388" cy="443" r="1.2" opacity=".62"/><circle cx="462" cy="584" r="1.7" opacity=".78"/>
+    <circle cx="566" cy="491" r="1.1" opacity=".52"/><circle cx="681" cy="579" r="1.4" opacity=".72"/>
+    <circle cx="792" cy="408" r="1.2" opacity=".56"/><circle cx="878" cy="551" r="1.5" opacity=".74"/>
+  </g>
+  <g fill="#5ee7ff"><circle cx="97" cy="163" r="1.5" opacity=".9"/><circle cx="531" cy="160" r="1.3" opacity=".8"/><circle cx="832" cy="361" r="1.4" opacity=".75"/></g>
+  <path d="M0 594h960v46H0z" fill="#06101e" opacity=".52"/>
+</svg>

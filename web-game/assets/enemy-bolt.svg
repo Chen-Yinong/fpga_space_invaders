@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="32" viewBox="0 0 12 32">
+  <defs>
+    <linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff648c"/>
+      <stop offset=".5" stop-color="#ff7ab5"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".15"/>
+    </linearGradient>
+  </defs>
+  <path d="M6 0c2 7 3 13 3 18l-3 14-3-14c0-5 1-11 3-18Z" fill="url(#bolt)"/>
+  <path d="M6 2v21" stroke="#ffeaf2" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

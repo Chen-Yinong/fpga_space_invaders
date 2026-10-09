@@ -1,0 +1,21 @@
+* text=auto
+.* text eol=lf
+
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+*.md text eol=lf
+*.mjs text eol=lf
+*.py text eol=lf
+*.tcl text eol=lf
+*.v text eol=lf
+*.sv text eol=lf
+*.vhd text eol=lf
+*.xdc text eol=lf
+
+*.bit binary
+*.dcp binary
+*.png binary
+*.jpg binary
+*.jpeg binary

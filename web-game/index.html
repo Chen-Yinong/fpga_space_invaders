@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#050916" />
+    <title>Space Invaders Prototype</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="arcade-shell">
+      <header class="top-hud" aria-label="Game status">
+        <div class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <p class="brand-kicker">FPGA LAB</p>
+            <h1>SPACE INVADERS</h1>
+          </div>
+        </div>
+        <div class="hud-readout" aria-live="polite">
+          <span>MODE</span>
+          <strong id="control-mode">KEYBOARD</strong>
+        </div>
+      </header>
+
+      <section class="game-stage" aria-label="Space Invaders game">
+        <div id="game" class="game-canvas"></div>
+        <div id="start-panel" class="screen-panel is-visible">
+          <p class="panel-kicker">MISSION 01</p>
+          <h2>DEFEND THE GRID</h2>
+          <button id="start-button" class="primary-action" type="button" disabled>
+            <span>START</span>
+          </button>
+        </div>
+        <div id="pause-panel" class="screen-panel" aria-hidden="true">
+          <p class="panel-kicker">SYSTEM HOLD</p>
+          <h2>PAUSED</h2>
+          <button id="resume-button" class="primary-action" type="button">
+            <span>RESUME</span>
+          </button>
+        </div>
+        <div id="game-over-panel" class="screen-panel" aria-hidden="true">
+          <p class="panel-kicker">RUN COMPLETE</p>
+          <h2 id="game-over-title">GAME OVER</h2>
+          <p id="game-over-score" class="panel-score">SCORE 000000</p>
+          <button id="restart-button" class="primary-action" type="button">
+            <span>RESTART</span>
+          </button>
+        </div>
+      </section>
+
+      <footer class="control-deck">
+        <div class="movement-controls" aria-label="Movement controls">
+          <button id="move-left" class="control-button" type="button" aria-label="Move left">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 5 8 12l7 7" />
+            </svg>
+          </button>
+          <button id="move-right" class="control-button" type="button" aria-label="Move right">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+        <div class="system-controls" aria-label="System controls">
+          <button id="pause-button" class="system-button" type="button" aria-label="Pause game">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 5v14M16 5v14" />
+            </svg>
+          </button>
+          <button id="reset-button" class="system-button" type="button" aria-label="Reset game">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 4v6h6M20 20v-6h-6" />
+              <path d="M5.8 15.8A7 7 0 0 0 18.4 17M18.2 8.2A7 7 0 0 0 5.6 7" />
+            </svg>
+          </button>
+        </div>
+        <button id="fire-button" class="fire-button" type="button" aria-label="Fire">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 4v22M12 9h8M9 16h14" />
+          </svg>
+        </button>
+      </footer>
+    </main>
+
+    <script src="./vendor/phaser.min.js"></script>
+    <script src="./game.js"></script>
+  </body>
+</html>
