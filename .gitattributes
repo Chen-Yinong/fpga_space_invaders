@@ -22,6 +22,7 @@
 # 必须保留 UTF-8 BOM，否则 Windows PowerShell 5.1 会把中文脚本解析成乱码。
 # 见 docs/environment_setup.md 第 3 节「关键坑」。
 *.ps1 text eol=crlf
+*.bat text eol=crlf
 
 # --- 二进制资源 ---
 *.bit binary
