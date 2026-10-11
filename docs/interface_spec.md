@@ -3,11 +3,11 @@
 | 项目 | 内容 |
 | --- | --- |
 | 阶段 | 第零阶段（WP0）冻结项 |
-| 版本 | v1.1 |
+| 版本 | v1.2 |
 | 冻结日期 | 2026-10-11（周日） |
 | 主责 | A（平台与集成） |
 | 评审 | B（视觉与 HLS）、C（游戏显示与验证） |
-| 状态 | **全部冻结（v1.1）**；具体开发板型号待采购确认（不影响器件系列） |
+| 状态 | **手势命令接口定稿（v1.2）**；具体开发板型号待采购确认（不影响器件系列） |
 
 本文件冻结**全程使用的时钟、复位、总线、分辨率与坐标标准**，是 A/B/C 三人并行开发的接口契约。
 模块对模块的连接只认本文件；任何一方擅自改端口都会立刻打断集成。
@@ -114,7 +114,7 @@
 
 | 项目 | 结论 |
 | --- | --- |
-| 在线调试 | **ILA** 抓取 `cmd_valid`、`cmd[3:0]`、`feat_*`、玩家坐标、碰撞标志 |
+| 在线调试 | **ILA** 抓取 `gesture_valid`、`gesture_cmd_level[2:0]`、`gesture_cmd_edge[2:0]`、`feat_*`、玩家坐标、碰撞标志 |
 | 状态指示 | 板载 LED：`led[0]` 心跳（1 Hz）、`led[1]` 帧有效、`led[2]` 手势有效、`led[3]` 游戏运行 |
 | 串口日志 | UART 115200 8N1（经 PS 或 PL UART），输出帧率与延迟统计 |
 | 抓图 | 视觉中间结果经 ILA/BMP 导出，与 Python golden model 逐帧比对 |
@@ -180,7 +180,7 @@
 | 路径 | 方法 | 参数 |
 | --- | --- | --- |
 | 视频流 `clk_pix` -> `clk_sys` | **Xilinx 异步 FIFO（FWFT）** | 宽度 36 bit（32 数据 + SOF + EOL），深度 512 |
-| `cmd_valid`/`cmd[3:0]` -> 游戏域 | 双触发器同步 + `valid` 脉冲展宽至 >= 4 个目标时钟周期 | 独热编码保证多比特安全 |
+| `gesture_valid`/`gesture_cmd_level[2:0]`/`gesture_cmd_edge[2:0]` -> 游戏域 | `gesture_valid` 单比特双触发器同步 + 数据稳定期采样 | 数据在 `valid` 脉冲期间保持稳定 |
 | `feat_*` -> `clk_sys` | 帧末**信箱（mailbox）**寄存器组 + `feat_valid` 单比特同步 | 多比特数据用"数据稳定 + 单比特有效"方式跨域 |
 | 计数器/状态回读 -> AXI | 双触发器同步 | 仅用于显示与日志，不参与控制 |
 
@@ -216,7 +216,7 @@
 
 | 指标 | 目标值 | 测量方法 |
 | --- | --- | --- |
-| 摄像头帧 -> 手势命令 | <= 20 ms | ILA 同步抓 `vsync` 与 `cmd_valid` 时间戳 |
+| 摄像头帧 -> 手势命令 | <= 20 ms | ILA 同步抓 `vsync` 与 `gesture_valid` 时间戳 |
 | 手势命令 -> 画面变化 | <= 2 帧（约 33 ms） | 60 Hz tick + 显示双缓冲 |
 | 端到端（含游戏逻辑） | <= 50 ms | 上述两项之和，现场用示波器/LED 打点验证 |
 | 显示帧率 | 稳定 60 Hz | VGA 时序计数器 |
@@ -230,19 +230,60 @@
 
 | 模块 | 时钟域 | 输入 | 输出 | 负责 |
 | --- | --- | --- | --- | --- |
-| `cam_capture` | `pclk` | `pclk`, `vsync`, `href`, `data[7:0]`, `rst_n` | `m_axis_*`（SOF/EOL/32bit） | A |
+| `cam_capture` | `pclk` | `pclk`, `vsync`, `href`, `de`, `data[15:0]`, `rst_n` | `m_axis_*`（SOF/EOL/32bit） | A |
 | `axis_async_fifo` | 跨域 | `clk_pix` 侧 `s_axis_*` | `clk_sys` 侧 `m_axis_*` | A |
 | `vision_pipeline` | `clk_sys` | `s_axis_*` | `feat_cx/cy/area/w/h/open/vx`, `feat_valid` | B |
-| `gesture_fsm` | `clk_sys` | `feat_*`, `feat_valid`, 阈值寄存器 | `cmd_valid`, `cmd[3:0]` | B |
-| `game_core` | `clk_sys` | `cmd_valid`, `cmd[3:0]`, `tick_60hz`, `rst_n`, 配置寄存器 | `player_x/y`, 子弹组, 敌机组, `score`, `lives`, `game_state` | C |
+| `gesture_fsm` | `clk_sys` | `feat_*`, `feat_valid`, 阈值寄存器 | `gesture_valid`, `gesture_cmd_level[2:0]`, `gesture_cmd_edge[2:0]` | B |
+| `game_core` | `clk_sys` | `gesture_valid`, `gesture_cmd_level[2:0]`, `gesture_cmd_edge[2:0]`, `tick_60hz`, `rst_n`, 配置寄存器 | `player_x/y`, 子弹组, 敌机组, `score`, `lives`, `game_state` | C |
 | `sprite_render` | `clk_pix` | 游戏状态（信箱同步）, 像素坐标 `x/y` | `rgb[23:0]`, `pixel_valid` | C |
 | `vga_timing` | `clk_pix` | `rst_n` | `x`, `y`, `hsync`, `vsync`, `video_active`, `pixel_clk` | A |
 | `axi_lite_regs` | `clk_sys` | `s_axi_*` | 全部配置/状态寄存器 | A |
 
 > 该表是**集成契约**：任何一个模块的端口变化必须提前 24 小时在群里通告并更新本表版本号。
 
----
+### 8.1 手势命令接口（定稿 v1.2）
 
+手势模块对游戏本体的输出为**双总线**：`gesture_cmd_level[2:0]`（电平）、`gesture_cmd_edge[2:0]`（边沿）、`gesture_valid`（每帧 1 拍脉冲）。
+
+**`gesture_cmd_level[2:0]`（电平总线，每帧都读）**
+
+| 编码 | 语义 |
+| --- | --- |
+| `000` | 不动 / 无手势 |
+| `001` | 向左 |
+| `010` | 向右 |
+| `011~111` | 预留 |
+
+**`gesture_cmd_edge[2:0]`（边沿总线，只保持 1 帧）**
+
+| 编码 | 语义 |
+| --- | --- |
+| `000` | 无事件（默认） |
+| `001` | 开始 |
+| `010` | 暂停 |
+| `011` | 继续 |
+| `100` | 重开 |
+| `101` | 开始射击（预留） |
+| `110` | 暂停射击（预留） |
+| `111` | 预留 |
+
+**关键约定**
+
+1. **电平 vs 边沿由总线物理分开**：持续动作（移动/停止）走 `level`，一次性动作走 `edge`，游戏侧无需按编码值区分类型。
+
+2. **边沿总线只保持 1 帧**：检测到「开始/暂停/继续/重开」等事件时，`gesture_cmd_edge` 只在该帧非零，下一帧回 `000`。
+   游戏侧处理：`if (gesture_valid && gesture_cmd_edge != 3'b000) 触发对应事件`，无需记录历史。
+
+3. **电平总线每帧都发**：`gesture_valid=1` 时按 `gesture_cmd_level` 当前值响应（`001` 左 / `010` 右 / `000` 停）。
+
+4. **复位安全**：两条总线复位默认值均为 `000`，分别代表「不动」和「无事件」，不会误触发。
+
+5. **时钟域**：三根信号从 `cam_pclk` 域跨到 `clk_sys` 域。`gesture_cmd_level/edge` 在 `gesture_valid` 脉冲期间保持稳定，
+   采用「`gesture_valid` 单比特双触发器同步 + 数据稳定期采样」即可。
+
+6. **摄像头输入**：`cam_data[15:0]` 为 RGB565；行有效看 `cam_href`，像素有效看 `cam_de`（极性以模组 datasheet 为准）。
+
+---
 ## 9. 变更流程
 
 1. 修改本文件的**冻结项**需发起"接口变更提案"，说明动机、影响模块、回归测试范围。
@@ -268,3 +309,4 @@
 | --- | --- | --- | --- |
 | v1.0 | 2026-10-11 | 首次冻结：时钟/复位/总线/分辨率/坐标/延迟预算/端口契约 | A |
 | v1.1 | 2026-10-11 | 器件系列冻结为 Artix-7（XC7A100T 首选），补充无 PS 架构调整与板卡判据 | A |
+| v1.2 | 2026-10-11 | 手势命令接口定稿：双总线（level/edge 各 3bit）+ valid 脉冲、边沿只保持 1 帧、000=无命令、RGB565 输入 | A |
