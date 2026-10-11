@@ -1,10 +1,13 @@
 * text=auto
 .* text eol=lf
 
-*.js text eol=lf
+# --- 源码与文本 ---
+*.c text eol=lf
+*.h text eol=lf
+*.cpp text eol=lf
 *.css text eol=lf
 *.html text eol=lf
-*.svg text eol=lf
+*.js text eol=lf
 *.md text eol=lf
 *.mjs text eol=lf
 *.py text eol=lf
@@ -13,24 +16,23 @@
 *.sv text eol=lf
 *.vhd text eol=lf
 *.xdc text eol=lf
+*.svg text eol=lf
 
+# --- PowerShell ---
+# 必须保留 UTF-8 BOM，否则 Windows PowerShell 5.1 会把中文脚本解析成乱码。
+# 见 docs/environment_setup.md 第 3 节「关键坑」。
+*.ps1 text eol=crlf
+
+# --- 二进制资源 ---
 *.bit binary
 *.dcp binary
 *.png binary
 *.jpg binary
 *.jpeg binary
-
-# PowerShell 脚本必须保留 BOM，否则 Windows PowerShell 5.1 会把中文解析成乱码。
-# 见 docs/environment_setup.md 第 3 节「关键坑」。
-*.ps1 text eol=crlf
-*.tcl text eol=lf
-*.md text eol=lf
-
-# 二进制资源
 *.doc binary
+*.docx binary
 *.ppt binary
 *.pptx binary
-*.docx binary
 *.xlsx binary
 *.wav binary
 *.mp3 binary
