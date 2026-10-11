@@ -161,7 +161,7 @@ if ((Test-Path -LiteralPath $vitisBat) -or (Test-Path -LiteralPath $vitisHls)) {
 }
 
 # --- 目标器件 / 板卡 ------------------------------------------------------
-Add-Result -Name '目标器件' -Status 'WARN' -Detail '尚未冻结，见 docs/interface_spec.md 第 2 节（第 1 周内必须关闭）'
+Add-Result -Name '目标器件' -Status 'PASS' -Detail 'Artix-7（XC7A100T 首选，XC7A35T 备选）—— 已冻结，见 docs/interface_spec.md v1.1'
 
 # --- 输出 ---------------------------------------------------------------
 Write-Host ''
