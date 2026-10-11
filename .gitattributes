@@ -19,3 +19,18 @@
 *.png binary
 *.jpg binary
 *.jpeg binary
+
+# PowerShell 脚本必须保留 BOM，否则 Windows PowerShell 5.1 会把中文解析成乱码。
+# 见 docs/environment_setup.md 第 3 节「关键坑」。
+*.ps1 text eol=crlf
+*.tcl text eol=lf
+*.md text eol=lf
+
+# 二进制资源
+*.doc binary
+*.ppt binary
+*.pptx binary
+*.docx binary
+*.xlsx binary
+*.wav binary
+*.mp3 binary

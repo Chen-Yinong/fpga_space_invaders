@@ -1,0 +1,18 @@
+# FPGA Space Invaders - Python 依赖
+# 安装： py -m pip install -r requirements.txt
+# 建议在虚拟环境中使用： py -3 -m venv .venv ; .\.venv\Scripts\Activate.ps1
+#
+# 用途：手势算法 golden model、图像数据集处理、指标绘图、仿真对比。
+# 依据：docs/environment_setup.md
+
+# --- 数值与图像处理核心（B 负责的 golden model 必需）---
+numpy>=2.1
+opencv-python>=4.10
+scipy>=1.14
+scikit-image>=0.24
+pillow>=11.0
+matplotlib>=3.9
+
+# --- 仿真与验证（C 负责，可选但推荐）---
+# cocotb 需要配合仿真器（xsim / iverilog / verilator）使用
+cocotb>=1.9
