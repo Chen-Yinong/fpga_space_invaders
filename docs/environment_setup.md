@@ -23,7 +23,7 @@
 | Python | 3.11 – 3.13 | ✅ 3.13.5 | `C:\Users\Strange\AppData\Local\Programs\Python\Python313\python.exe` | golden model、图像处理、指标绘图 |
 | pip | 随 Python | ✅ 25.1.1 | 同上 | 安装 Python 包 |
 | Node.js | >= 20 | ✅ v24.19.0 | Codex 运行时内置 | 仅 `web-game/` 原型与本地静态服务器 |
-| VS Code | >= 1.90 | ✅ 1.141.0（本次安装，user scope） | `%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe` | 代码编辑、Markdown、Tcl、Python、Git |
+| VS Code | >= 1.90 | ✅ 1.141.0（用户版，已迁移至 D 盘） | `D:\fpga\Microsoft VS Code\Code.exe` | 代码编辑、Markdown、Tcl、Python、Git |
 | Vivado | **2026.1**（备选 2025.2） | ⚠️ 已安装，**未加入 PATH** | `D:\fpga\2026.1\Vivado\bin\vivado.bat` | 综合、实现、时序、bitstream、xsim 仿真 |
 | Vitis / Vitis HLS | 2026.1 | ✅ 已安装 | `D:\fpga\2026.1\Vitis\bin\` | HLS 视觉流水线、PS 侧代码 |
 | Model Composer | 2026.1 | ✅ 已安装 | `D:\fpga\2026.1\Model_Composer\` | 备用（Simulink 建模，本项目不强制使用） |
@@ -77,10 +77,18 @@ py -m pip install -r requirements.txt
 
 ### 2.3 VS Code
 
-已通过 winget 安装（用户级，无需管理员权限）：
+VS Code 已迁移至 **D 盘**（2026-10-11）：`D:\fpga\Microsoft VS Code\Code.exe`。
+
+> 历史：最早通过 winget 用户级安装（`%LOCALAPPDATA%\Programs\Microsoft VS Code`），
+> 后因存在两个 VS Code（winget 版 + 商店 MSIX 版）且扩展只装进了 winget 版，
+> 统一为：**卸载商店版，把 winget 版重装到 D 盘**。
+> 扩展与设置存放在 `%USERPROFILE%\.vscode\`，与安装目录无关，重装后自动保留。
+
+重新安装（如需）：
 
 ```powershell
-winget install --id Microsoft.VisualStudioCode --scope user --accept-package-agreements --accept-source-agreements
+# 下载用户版安装包后静默安装到 D 盘（/DIR 必须放最后）
+VSCodeUserSetup-x64.exe /VERYSILENT /NORESTART /SUPPRESSMSGBOXES /MERGETASKS=!runcode /DIR="D:\fpga\Microsoft VS Code"
 ```
 
 **安装后必须重启终端**（PATH 刷新），随后 `code --version` 应可用。

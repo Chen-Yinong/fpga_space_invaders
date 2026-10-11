@@ -18,7 +18,7 @@ param(
     # Vivado 安装根目录（可覆盖）
     [string]$VivadoRoot = 'D:\fpga\2026.1',
     # VS Code 可执行文件路径（可覆盖）
-    [string]$VsCodeExe  = "$env:LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe"
+    [string]$VsCodeExe  = 'D:\fpga\Microsoft VS Code\Code.exe'
 )
 
 $ErrorActionPreference = 'Continue'
@@ -131,6 +131,7 @@ if ($node) {
 # --- VS Code ------------------------------------------------------------
 $codeExe = Get-CmdPath 'code'
 if (-not $codeExe -and (Test-Path -LiteralPath $VsCodeExe)) { $codeExe = $VsCodeExe }
+if (-not $codeExe -and (Test-Path -LiteralPath "$env:LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe")) { $codeExe = "$env:LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe" }
 if ($codeExe) {
     $v = (Get-Item -LiteralPath $codeExe).VersionInfo.ProductVersion
     if (-not $v) { $v = 'unknown' }
