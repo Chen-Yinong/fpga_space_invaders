@@ -16,6 +16,7 @@
 # 文件夹是这样的：
 
 1. fpga_space_invaders是Vivado工程的文件夹，有gitignore，src/将来提交的时候从那里拿取
+   - 双击fpga_space_invaders\fpga_space_invaders\fpga_space_invaders.xpr即可打开工程，gitignore的文件此时会重新自动生成
 2. “说明”的gitignore比较简略（就是毙掉pycache），所以不要乱放东西，以下东西的草稿可以放在“说明”
    - 项目简介 + 复现步骤
    - 仿真或验证脚本与结果
