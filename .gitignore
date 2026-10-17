@@ -7,3 +7,4 @@
 /vivado*.backup.log
 __pycache__/
 *.pyc
+/vivado*.jou

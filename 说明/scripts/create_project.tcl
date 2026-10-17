@@ -13,6 +13,9 @@ add_files -fileset sources_1 [glob -nocomplain [file join $rtl board cam *.v]]
 set_property top top_cam_game [current_fileset]
 add_files -fileset constrs_1 [file join $root fpga_space_invaders constraints top_cam_game.xdc]
 
+# 仿真源文件（不参与综合）
+add_files -fileset sim_1 [glob -nocomplain [file join $root fpga_space_invaders sim *.sv]]
+
 if {[get_ips -quiet hdmi_pll] eq ""} {
     create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name hdmi_pll
     set_property -dict [list \
