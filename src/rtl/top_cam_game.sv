@@ -180,16 +180,22 @@ module top_cam_game #(
     .rgb(game_rgb)
   );
 
-  // ---------------- 摄像头小窗 ----------------
+  // ---------------- 摄像头预览：标定中全屏，否则小窗 ----------------
   logic        in_win, border;
   logic [9:0]  wx, wy;
   logic [17:0] raddr;
+  logic [8:0]  fcol, frow;
   always_comb begin
     wx = px[9:0] - WIN_X0[9:0];
     wy = py[9:0] - WIN_Y0[9:0];
     in_win = (px >= WIN_X0) && (px < WIN_X0+WIN_W) && (py >= WIN_Y0) && (py < WIN_Y0+WIN_H);
     border = in_win && ((wx < 2) || (wx >= WIN_W-2) || (wy < 2) || (wy >= WIN_H-2));
-    raddr  = (({8'b0, wy} << 1) * 18'd320) + ({8'b0, wx} << 1);
+    fcol = (px >= 10'd640) ? 9'd319 : px[9:1];
+    frow = (py >= 10'd480) ? 9'd239 : py[8:1];
+    if (cb2)
+      raddr = ({8'b0, frow} * 17'd320) + {8'b0, fcol};   // 全屏预览
+    else
+      raddr = (({8'b0, wy} << 1) * 18'd320) + ({8'b0, wx} << 1);   // 小窗
   end
 
   logic [23:0] cam_rd;
@@ -199,25 +205,40 @@ module top_cam_game #(
     .clk_disp(clk_25m), .raddr(raddr), .rd(cam_rd)
   );
 
-  // 输出流水（对齐：game/cam/窗口标志都延 1 拍）
-  logic [23:0] game_d, cam_d; logic win_d, brd_d;
+  // 输出流水（game/cam/窗口/标定标志都延 1 拍）
+  logic [23:0] game_d, cam_d; logic win_d, brd_d, calib_d;
   logic [9:0] wx_d, wy_d;
+  logic [11:0] px_d, py_d;
   logic hs_d, vs_d, va_d;
   always_ff @(posedge clk_25m or negedge rst_n)
-    if (!rst_n) begin game_d<='0; cam_d<='0; win_d<=1'b0; brd_d<=1'b0; wx_d<='0; wy_d<='0; hs_d<=1'b0; vs_d<=1'b0; va_d<=1'b0; end
-    else begin
-      game_d<=game_rgb; cam_d<=cam_rd; win_d<=in_win; brd_d<=border; wx_d<=wx; wy_d<=wy;
+    if (!rst_n) begin
+      game_d<='0; cam_d<='0; win_d<=1'b0; brd_d<=1'b0; calib_d<=1'b0;
+      wx_d<='0; wy_d<='0; px_d<='0; py_d<='0; hs_d<=1'b0; vs_d<=1'b0; va_d<=1'b0;
+    end else begin
+      game_d<=game_rgb; cam_d<=cam_rd; win_d<=in_win; brd_d<=border; calib_d<=cb2;
+      wx_d<=wx; wy_d<=wy; px_d<=px; py_d<=py;
       hs_d<=hsync; vs_d<=vsync; va_d<=va;
     end
 
-  // 标定 ROI 框：摄像头中心 200..440 / 120..360 -> 小窗内 50..110 / 30..90
+  // 小窗内的标定框（游戏态用）
   wire roi_box = win_d && (wx_d >= 10'd60) && (wx_d < 10'd100) && (wy_d >= 10'd40) && (wy_d < 10'd80) &&
                  ((wx_d == 10'd60) || (wx_d == 10'd99) || (wy_d == 10'd40) || (wy_d == 10'd79));
 
+  // 全屏标定框（标定态用）：摄像头 [240,400)x[160,320)
+  wire roi_full = (px_d >= 12'd240) && (px_d < 12'd400) && (py_d >= 12'd160) && (py_d < 12'd320);
+  wire roi_full_edge = roi_full && ((px_d == 12'd240) || (px_d == 12'd399) || (py_d == 12'd160) || (py_d == 12'd319));
+
   wire [23:0] roi_col = (!cd2) ? 24'hFF0000 : (cb2 ? 24'hFFFF00 : 24'h00FF00);
   logic [23:0] final_rgb;
-  always_comb final_rgb = brd_d ? 24'hFFFFFF : (roi_box ? roi_col : (win_d ? cam_d : game_d));
-
+  always_comb begin
+    if (calib_d) begin
+      // 标定态：全屏摄像头预览 + 大黄框
+      if (roi_full_edge) final_rgb = 24'hFFFF00;
+      else               final_rgb = cam_d;
+    end else begin
+      final_rgb = brd_d ? 24'hFFFFFF : (roi_box ? roi_col : (win_d ? cam_d : game_d));
+    end
+  end
   assign hdmi_out_rgb   = final_rgb;
   assign hdmi_out_hsync = hs_d;
   assign hdmi_out_vsync = vs_d;
