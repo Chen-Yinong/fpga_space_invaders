@@ -1,14 +1,6 @@
-# build_game.tcl — 构建游戏版（OV7725 + 标定 + 小窗）
+# build_game.tcl — 构建游戏版（新目录结构）
 set root [pwd]
-open_project [file join $root build fpga_space_invaders fpga_space_invaders.xpr]
-add_files -fileset sources_1 [list \
-    [file join $root src rtl rgb2ycrcb.sv] \
-    [file join $root src rtl skin_calib.sv] \
-    [file join $root src rtl cam_frame_buf.sv] \
-    [file join $root src rtl num_overlay.sv] \
-    [file join $root src rtl board cam ov7725_top.v] \
-    [file join $root src rtl board cam ov7725_cfg.v] \
-    [file join $root src rtl board cam ov7725_data.v] ]
+open_project [file join $root fpga_space_invaders fpga_space_invaders.xpr]
 set_property top top_cam_game [current_fileset]
 update_compile_order -fileset sources_1
 reset_run synth_1

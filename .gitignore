@@ -1,0 +1,9 @@
+# 旧结构残留（可手动删除，不影响仓库）
+/build/
+/scripts/
+/sim/
+/.Xil/
+/vivado*.log
+/vivado*.backup.log
+__pycache__/
+*.pyc
