@@ -107,6 +107,7 @@ module top_cam_game #(
   // ---------------- 手势 ----------------
   // 用 hand_pix（肤色 & 前景）而不是裸肤色：静止的桌面/墙面不参与质心统计
   logic [1:0] gest_cmd_p;
+  logic       hand_pix;      // 肤色 & 前景（来自 cam_frame_buf）
   vision_gesture #(.K_PIX(6), .MIN_PIX(2000)) u_vis (
     .pclk(cam1_pclk), .rst_n(rst_n),
     .pixel_en(cam_wr_en), .skin(hand_pix),
@@ -218,7 +219,6 @@ module top_cam_game #(
   end
 
   logic [23:0] cam_rd;
-  logic        hand_pix;         // 肤色 & 前景（来自 cam_frame_buf）
   cam_frame_buf #(.DW(320), .DH(240)) u_buf (
     .pclk(cam1_pclk), .rst_n(rst_n), .pixel_en(cam_wr_en), .pixel(cam_wr_data),
     .skin(skin), .href(cam1_href), .vsync(cam1_vsync),

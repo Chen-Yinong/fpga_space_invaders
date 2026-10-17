@@ -226,7 +226,8 @@ artix-7
 - 已恢复构建必需目录到工程目录下，并把 `.xpr` 中写死的 `C:/Users/Lenovo/...` 路径全部改为 `$PPRDIR/...` 相对路径。
 - `fpga_space_invaders.xpr` 当前包含 25 个 RTL 文件，综合顶层为 `top_cam_game`；新增 `sim_1` 文件集，加入 5 个 testbench，仿真顶层为 `tb_game_core`。
 - `create_project.tcl` 同步补上 `sim_1`，以后重建工程不会漏掉仿真文件。
-- 最新比特流已重新综合/实现/生成：`top_cam_game.bit`，3,825,992 bytes，WNS **+8.747 ns**，全约束满足。
+- 全量 `xvlog` 编译时发现 `top_cam_game.sv` 中 `hand_pix` 在声明前使用（仿真会报隐式声明错误）；已把声明前移，30 个 RTL/Testbench 文件全部编译通过。
+- 最新比特流已重新综合/实现/生成：`top_cam_game.bit`，3,825,992 bytes，WNS **+8.747 ns**，全约束满足，0 routing error。
 
 **遗留问题**
 - `说明/` 为中文目录名，与 `repo_conventions.md` 的英文路径规则冲突；`script2/` 与 `scripts/` 功能重复。
@@ -244,3 +245,4 @@ artix-7
 | v1.2 | 2026-10-17 | 游戏 v2 上板、OV7725 摄像头手势、肤色标定与小窗预览；记录 9 条关键纠错 | C/A |
 | v1.3 | 2026-10-17 | 肤色标定方案落地：上电无默认肤色、key1 全屏采样、160×160 ROI、中点±12、合理性检查、小窗预览 | C/A |
 | v1.4 | 2026-10-17 | 复核目录重构、恢复构建源、相对化 xpr 路径、加入 sim_1，并记录最新构建验证 | C/A |
+| v1.5 | 2026-10-17 | 修复 top_cam_game 中 hand_pix 声明顺序，完成全量 xvlog 与重新构建验证 | C/A |
