@@ -125,9 +125,61 @@ artix-7
 
 ---
 
+
+---
+
+### 2026-10-15 ~ 2026-10-17 | C（游戏本体）+ A（板级集成） | Codex（GPT-5 系列，桌面版）
+
+**目标**：把游戏本体做完整并上真板；接入 OV7725 摄像头手势；解决"战机一直向右"。
+
+**里程碑**
+
+1. 游戏本体 v2 上板可玩：自动连射（多子弹）、敌机子弹、生命/无敌、波次、HUD。
+2. 板卡确认：**野火「升腾 Pro」XC7A100T-FGG484-2**，50MHz，HDMI（SiI9134），**OV7725** 摄像头。
+3. 摄像头链路打通：OV7725(0x21) → DVP 采集 → RGB565→YCbCr → 肤色 → 质心速度 → 左/右/停 → 游戏。
+4. 按团队方案加入：**按键触发肤色标定**（key1）+ **摄像头小窗预览**（右上角，肤色标绿，黄框为采样区）。
+
+**关键问题与纠错（保留）**
+
+| # | 现象 | 根因 | 修复 |
+| --- | --- | --- | --- |
+| 1 | 不按键战机一直左移 | 板载按键**低有效**，代码按高有效 | 顶层改为 `~key[n]` |
+| 2 | 自动连射却不发射 | 点射脉冲 1ms < tick 周期 1.67ms，脉冲落在两次 tick 之间 | 脉冲加宽到 3ms |
+| 3 | 综合后时序崩（WNS −15.2ns） | 6 子弹 × 50 敌机碰撞组合逻辑 60 级 | 列/行坐标预寄存 + 碰撞结果流水 + 视频输出流水 → WNS +8.9ns |
+| 4 | 摄像头全屏红（cfg_done=0） | 摄像头是 **OV7725(0x21)**，误用 OV5640(0x3C) 配置，I2C 无 ACK 卡死 | 换用 `ov7725_top/ov7725_cfg` |
+| 5 | 战机一直向右 | `dxs=xsum−xsum_prev` 声明为无符号，左移的负数变成约 40 亿 | 改为 `logic signed [33:0]` 有符号比较 |
+| 6 | 采样后大部分画面变绿 | 采样 ROI 240×240 太大、min/max 范围过宽 | ROI 缩到 120×120，阈值改为「中点 ±12」 |
+| 7 | 布线失败 IO Clock Placer | `cam1_pclk` 到 BUFG 走非专用路径 | `CLOCK_DEDICATED_ROUTE FALSE` + 显式 `create_clock` |
+| 8 | CDC 路径时序违例 | cam1_pclk ↔ sys_clk ↔ clk_25m 多处跨域 | 补 `set_false_path` CDC 约束 |
+| 9 | 综合报 `i2c_ctrl` 参数不存在 | HDMI 与摄像头两个 `i2c_ctrl` 模块重名 | 摄像头版改名 `cam_i2c_ctrl` |
+
+**产出物**
+
+- `src/rtl/`：`game_core`(v2)、`debounce`、`vga_timing`、`sprite_render`(多子弹+HUD)、`top_button_game`、`top_hdmi_game`、`top_cam_game`、`top_cam_test`、`cam_preview`、`cam_frame_buf`、`skin_calib`、`rgb2ycrcb`、`vision_gesture`
+- `src/rtl/board/`：HDMI I2C（`i2c_ctrl/hdmi_cfg/hdmi_i2c`）；`board/cam/`：OV7725/OV5640 配置与采集
+- `constraints/top_cam_game.xdc`：摄像头 + HDMI + 按键 + CDC 约束
+- `scripts/`：`create_project` / `build_bitstream` / `build_game` / `build_camtest` / `program_fpga` / `program_camtest`
+- `sim/`：`tb_game_core`(11 项)、`tb_gesture_dir_fsm`、`tb_render`、`tb_dyn_render`、一键运行脚本
+- `docs/game_tuning.md`：游戏本体参数确认表
+
+**验证数据**
+
+- 仿真：`tb_game_core` 11/11 PASS；`tb_gesture_dir_fsm` 7/7 PASS；渲染 9 帧正常。
+- 时序：`top_cam_game` WNS **+8.705ns**（全约束满足）；`top_cam_test` WNS +25.887ns。
+- 上板：游戏可玩、HDMI 出图、摄像头出图、肤色识别正常。
+
+**待验证 / 风险**
+
+- 标定后的手势方向与灵敏度仍需现场实测（`K_PIX=6`、`MIN_PIX=2000`）。
+- 摄像头 pclk 走非专用 IO→BUFG 路径（已放宽约束，24MHz 可接受，但属时序隐患）。
+- 尚未写 Flash（当前 JTAG 烧写，掉电丢失）。
+- `docs/interface_spec.md` 仍写 VGA/100MHz，需更新为 HDMI/50MHz/OV7725。
+
+---
+
 ## 变更记录
 
 | 版本 | 日期 | 变更内容 | 作者 |
 | --- | --- | --- | --- |
 | v1.0 | 2026-10-11 | 建立日志，记录第零阶段 AI 协作全过程与 5 条纠错轨迹 | A |
-| v1.1 | 2026-10-11 | 追加器件冻结（Artix-7）决策记录与架构调整说明 | A |
+| v1.1 | 2026-10-11 | 追加器件冻结（Artix-7）决策记录与架构调整说明 | A |`r`n| v1.2 | 2026-10-17 | 游戏 v2 上板、OV7725 摄像头手势、肤色标定与小窗预览；记录 9 条关键纠错 | C/A |

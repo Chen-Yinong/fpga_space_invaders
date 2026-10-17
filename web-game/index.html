@@ -86,5 +86,25 @@
 
     <script src="./vendor/phaser.min.js"></script>
     <script src="./game.js"></script>
-  </body>
+    <script>
+      // 手势桥接：每 50ms 轮询 Python 服务器的 /gesture，喂给游戏预留的接口
+      (function () {
+        function poll() {
+          fetch("/gesture")
+            .then(function (r) { return r.json(); })
+            .then(function (g) {
+              if (window.fpgaInvaders && window.fpgaInvaders.setGestureCommand) {
+                window.fpgaInvaders.setGestureCommand({
+                  left: !!g.left,
+                  right: !!g.right,
+                  fire: !!g.fire
+                });
+              }
+            })
+            .catch(function () {})
+            .finally(function () { setTimeout(poll, 50); });
+        }
+        setTimeout(poll, 500);
+      })();
+    </script>  </body>
 </html>
