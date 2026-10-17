@@ -2,11 +2,11 @@
 // 采样 CAL_FRAMES 帧后，阈值 = [min-8, max+8]（带兜底：没采到就保持默认）
 `timescale 1ns/1ps
 module skin_calib #(
-  parameter int ROI_X0 = 260,
-  parameter int ROI_X1 = 380,
-  parameter int ROI_Y0 = 180,
-  parameter int ROI_Y1 = 300,
-  parameter int CAL_FRAMES = 30
+  parameter int ROI_X0 = 240,
+  parameter int ROI_X1 = 400,
+  parameter int ROI_Y0 = 160,
+  parameter int ROI_Y1 = 320,
+  parameter int CAL_FRAMES = 45
 )(
   input  logic        pclk,
   input  logic        rst_n,
@@ -29,12 +29,15 @@ module skin_calib #(
   wire btn_rise= calib_btn & ~btn_d;
   wire [7:0] cbn = cb[7:0];   // 采样时用低 8 位（Cb/Cr 本身 0..255）
   wire [7:0] crn = cr[7:0];
+  wire [7:0] cbm = (cbmin + cbmax) >> 1;
+  wire [7:0] crm = (crmin + crmax) >> 1;
 
   always_ff @(posedge pclk or negedge rst_n) begin
     if (!rst_n) begin
       st<=S_IDLE; vsync_d<=1'b0; btn_d<=1'b0;
       cbmin<=8'hFF; cbmax<=8'h00; crmin<=8'hFF; crmax<=8'h00;
-      cb_lo<=8'd77; cb_hi<=8'd127; cr_lo<=8'd133; cr_hi<=8'd173;
+      // 上电默认“无肤色数据”：空区间，未采样前什么都不算皮肤
+      cb_lo<=8'd255; cb_hi<=8'd0; cr_lo<=8'd255; cr_hi<=8'd0;
       calib_done<=1'b0; calib_busy<=1'b0; fcnt<=8'd0;
     end else begin
       vsync_d <= vsync; btn_d <= calib_btn;
@@ -52,14 +55,19 @@ module skin_calib #(
         end
         if (vs_rise) begin
           if (fcnt >= CAL_FRAMES-1) begin
-            if ((cbmax >= cbmin) && (crmax >= crmin)) begin
-              // 用范围中点 ±12（窄而稳，避免把背景算进皮肤）
-              cb_lo <= (((cbmin + cbmax) >> 1) > 8'd12)  ? (((cbmin + cbmax) >> 1) - 8'd12) : 8'd0;
-              cb_hi <= (((cbmin + cbmax) >> 1) < 8'd243) ? (((cbmin + cbmax) >> 1) + 8'd12) : 8'd255;
-              cr_lo <= (((crmin + crmax) >> 1) > 8'd12)  ? (((crmin + crmax) >> 1) - 8'd12) : 8'd0;
-              cr_hi <= (((crmin + crmax) >> 1) < 8'd243) ? (((crmin + crmax) >> 1) + 8'd12) : 8'd255;
+            // 合理性检查：采样中点必须“像肤色”，否则拒绝（框保持红，提示重采）
+            if ((cbmax >= cbmin) && (crmax >= crmin) &&
+                (cbm >= 8'd60) && (cbm <= 8'd150) &&
+                (crm >= 8'd110) && (crm <= 8'd200)) begin
+              cb_lo <= (cbm > 8'd12)  ? (cbm - 8'd12) : 8'd0;
+              cb_hi <= (cbm < 8'd243) ? (cbm + 8'd12) : 8'd255;
+              cr_lo <= (crm > 8'd12)  ? (crm - 8'd12) : 8'd0;
+              cr_hi <= (crm < 8'd243) ? (crm + 8'd12) : 8'd255;
+              calib_done <= 1'b1;
+            end else begin
+              calib_done <= 1'b0;   // 采样不像肤色 -> 拒绝
             end
-            st<=S_DONE; calib_done<=1'b1; calib_busy<=1'b0;
+            st<=S_DONE; calib_busy<=1'b0;
           end else fcnt <= fcnt + 8'd1;
         end
       end

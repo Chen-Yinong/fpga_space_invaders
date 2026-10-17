@@ -83,9 +83,11 @@ module top_cam_game #(
   );
 
   // ---------------- 肤色判定 ----------------
-  logic skin;
-  always_comb skin = (cb >= $signed({4'b0000,cb_lo})) && (cb <= $signed({4'b0000,cb_hi})) &&
-                     (cr >= $signed({4'b0000,cr_lo})) && (cr <= $signed({4'b0000,cr_hi}));
+  logic skin_raw, skin;
+  always_comb skin_raw = (cb >= $signed({4'b0000,cb_lo})) && (cb <= $signed({4'b0000,cb_hi})) &&
+                         (cr >= $signed({4'b0000,cr_lo})) && (cr <= $signed({4'b0000,cr_hi}));
+  // 未完成采样前，一律不算肤色
+  always_comb skin = calib_done && skin_raw;
 
   // ---------------- 手势 ----------------
   logic [1:0] gest_cmd_p;
@@ -101,6 +103,19 @@ module top_cam_game #(
     if (!rst_n) begin gs1<='0; gs2<='0; end else begin gs1<=gest_cmd_p; gs2<=gs1; end
   logic [1:0] move_cmd; assign move_cmd = gs2;
 
+  // 标定状态 -> 显示域（框颜色：红=未标定 黄=采样中 绿=完成）
+  logic cd1, cd2, cb1, cb2;
+  always_ff @(posedge clk_25m or negedge rst_n)
+    if (!rst_n) begin cd1<=1'b0; cd2<=1'b0; cb1<=1'b0; cb2<=1'b0; end
+    else begin cd1<=calib_done; cd2<=cd1; cb1<=calib_busy; cb2<=cb1; end
+  // 标定完成 -> 游戏域（未采样不允许开始）
+  logic cds1, cds2;
+  always_ff @(posedge sys_clk or negedge rst_n)
+    if (!rst_n) begin cds1<=1'b0; cds2<=1'b0; end
+    else begin cds1<=calib_done; cds2<=cds1; end
+  logic btn_start_g;
+  assign btn_start_g = btn_start & cds2;
+
   // ---------------- 游戏核心 ----------------
   localparam int PSLOTS=6, ESLOTS=3;
   logic [8:0] g_px; logic g_pvis;
@@ -110,7 +125,7 @@ module top_cam_game #(
   logic [15:0] g_score; logic [3:0] g_lives; logic [2:0] g_wave; logic [1:0] g_state;
 
   game_core #(.TICK_DIV(833333), .MOVE_PERIOD(30), .PSLOTS(PSLOTS), .ESLOTS(ESLOTS)) u_game (
-    .clk_sys(sys_clk), .rst_n(rst_n), .move_cmd(move_cmd), .btn_start(btn_start),
+    .clk_sys(sys_clk), .rst_n(rst_n), .move_cmd(move_cmd), .btn_start(btn_start_g),
     .player_x(g_px), .player_visible(g_pvis),
     .pb_valid(g_pbv), .pb_x(g_pbx), .pb_y(g_pby),
     .eb_valid(g_ebv), .eb_x(g_ebx), .eb_y(g_eby),
@@ -196,11 +211,12 @@ module top_cam_game #(
     end
 
   // 标定 ROI 框：摄像头中心 200..440 / 120..360 -> 小窗内 50..110 / 30..90
-  wire roi_box = win_d && (wx_d >= 10'd65) && (wx_d < 10'd95) && (wy_d >= 10'd45) && (wy_d < 10'd75) &&
-                 ((wx_d == 10'd65) || (wx_d == 10'd94) || (wy_d == 10'd45) || (wy_d == 10'd74));
+  wire roi_box = win_d && (wx_d >= 10'd60) && (wx_d < 10'd100) && (wy_d >= 10'd40) && (wy_d < 10'd80) &&
+                 ((wx_d == 10'd60) || (wx_d == 10'd99) || (wy_d == 10'd40) || (wy_d == 10'd79));
 
+  wire [23:0] roi_col = (!cd2) ? 24'hFF0000 : (cb2 ? 24'hFFFF00 : 24'h00FF00);
   logic [23:0] final_rgb;
-  always_comb final_rgb = brd_d ? 24'hFFFFFF : (roi_box ? 24'hFFFF00 : (win_d ? cam_d : game_d));
+  always_comb final_rgb = brd_d ? 24'hFFFFFF : (roi_box ? roi_col : (win_d ? cam_d : game_d));
 
   assign hdmi_out_rgb   = final_rgb;
   assign hdmi_out_hsync = hs_d;
