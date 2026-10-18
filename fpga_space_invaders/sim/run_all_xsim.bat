@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "V=D:\fpga\2026.1\Vivado\bin"
+set "V=C:\Xilinx\2026.1\Vivado\bin"
 set "R=%~dp0.."
 set "W=%TEMP%\xsim_all_%RANDOM%"
 mkdir "%W%" 2>nul
