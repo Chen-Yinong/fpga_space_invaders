@@ -28,7 +28,7 @@
 
 # 新增的文件夹“is-it-possible-to-ai-it-perfect"
 
-`这两个文件由Codex撰写，展示了效果相当不错的两个成品`
+`cam_game，cam_game_optiflowverison这两个工程由Codex撰写，展示了效果相当不错的两个成品。另外三个文件夹是按键版游戏和两个手势识别模块（屏幕显示处理后画面，LED灯显示左或右）。`
 
 ## 基本设计
 
