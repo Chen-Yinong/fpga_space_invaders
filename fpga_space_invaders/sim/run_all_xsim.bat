@@ -1,6 +1,20 @@
 @echo off
 setlocal
-set "V=C:\Xilinx\2026.1\Vivado\bin"
+rem ---- 自动定位 Vivado（不同机器安装路径不同，别写死）----
+rem 优先级：环境变量 VIVADO_BIN > 本机常见路径 > PATH 里的 xvlog
+if defined VIVADO_BIN set "V=%VIVADO_BIN%"
+if not defined V set "V=D:\fpga\2026.1\Vivado\bin"
+if not exist "%V%\xvlog.bat" set "V=C:\Xilinx\2026.1\Vivado\bin"
+if not exist "%V%\xvlog.bat" (
+    for %%P in (xvlog.bat) do if not "%%~$PATH:P"=="" set "V=%%~dpP"
+)
+if not exist "%V%\xvlog.bat" (
+    echo [ERROR] 找不到 Vivado 的 xvlog.bat
+    echo         请设置环境变量 VIVADO_BIN 指向 Vivado 的 bin 目录，
+    echo         例如:  set VIVADO_BIN=D:\fpga\2026.1\Vivado\bin
+    exit /b 1
+)
+echo 使用 Vivado: %V%
 set "R=%~dp0.."
 set "W=%TEMP%\xsim_all_%RANDOM%"
 mkdir "%W%" 2>nul
