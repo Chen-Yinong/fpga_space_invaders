@@ -3,6 +3,7 @@
 module tb_render;
   localparam int H_VISIBLE = 640;
   localparam int V_VISIBLE = 480;
+  localparam int PSLOTS = 6, ESLOTS = 3;
 
   logic        clk = 0, rst_n = 0;
   logic [11:0] x, y;
@@ -11,23 +12,32 @@ module tb_render;
 
   // 游戏状态（本仿真固定，用于验证渲染）
   logic [8:0]  player_x = 9'd160;
-  logic        bullet_valid = 1'b1;
-  logic [8:0]  bullet_x = 9'd160;
-  logic [8:0]  bullet_y = 9'd140;
+  logic        player_visible = 1'b1;
+  logic [PSLOTS-1:0]   pb_valid = 6'b000001;
+  logic [PSLOTS*9-1:0] pb_x = '0;
+  logic [PSLOTS*9-1:0] pb_y = '0;
+  logic [ESLOTS-1:0]   eb_valid = 3'b001;
+  logic [ESLOTS*9-1:0] eb_x = '0;
+  logic [ESLOTS*9-1:0] eb_y = '0;
   logic [49:0] enemy_alive;
   logic [8:0]  enemy_x0 = 9'd40;
   logic [8:0]  enemy_y0 = 9'd40;
+  logic [15:0] score = 16'd1234;
+  logic [3:0]  lives = 4'd3;
+  logic [2:0]  wave  = 3'd2;
 
   vga_timing u_timing (
     .clk_pix(clk), .rst_n(rst_n), .x(x), .y(y),
     .hsync(hsync), .vsync(vsync), .video_active(video_active), .frame_start(frame_start)
   );
 
-  sprite_render u_render (
+  sprite_render #(.PSLOTS(PSLOTS), .ESLOTS(ESLOTS)) u_render (
     .vid_x(x[9:0]), .vid_y(y[9:0]),
-    .player_x(player_x), .bullet_valid(bullet_valid),
-    .bullet_x(bullet_x), .bullet_y(bullet_y),
+    .player_x(player_x), .player_visible(player_visible),
+    .pb_valid(pb_valid), .pb_x(pb_x), .pb_y(pb_y),
+    .eb_valid(eb_valid), .eb_x(eb_x), .eb_y(eb_y),
     .enemy_alive(enemy_alive), .enemy_x0(enemy_x0), .enemy_y0(enemy_y0),
+    .score(score), .lives(lives), .wave(wave),
     .rgb(rgb)
   );
 
@@ -35,6 +45,10 @@ module tb_render;
 
   integer fd, cnt;
   initial begin
+    pb_x[8:0] = 9'd160;
+    pb_y[8:0] = 9'd140;
+    eb_x[8:0] = 9'd200;
+    eb_y[8:0] = 9'd100;
     enemy_alive = {50{1'b1}};
     enemy_alive[45] = 1'b0;   // 打掉几个，画面更真实
     enemy_alive[46] = 1'b0;

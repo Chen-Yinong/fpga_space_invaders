@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "MS=D:\components\modelsim_ase\win32aloem"
+set "MS=C:\intelFPGA_lite\17.1\modelsim_ase\win32aloem"
 set "PATH=%MS%;%PATH%"
 set "WORK=%TEMP%\msim_game"
 if exist "%WORK%" rmdir /s /q "%WORK%"
