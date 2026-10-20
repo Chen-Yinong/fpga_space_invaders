@@ -18,7 +18,7 @@ module skin_calib #(
   parameter int ROI_Y0 = 200,
   parameter int ROI_W  = 80,
   parameter int ROI_H  = 80,
-  parameter int MARGIN = 8         // 比 square_demo 的 12 更紧，减少环境混入
+  parameter int MARGIN = 24        // 放宽：颜色不再负责排除静止家具（那是背景差分的活）
 )(
   input  logic        pclk,
   input  logic        rst_n,
@@ -35,11 +35,11 @@ module skin_calib #(
   output logic [7:0]  mon_cb,        // 最近一帧采到的 Cb 均值（上屏显示用）
   output logic [7:0]  mon_cr         // 最近一帧采到的 Cr 均值
 );
-  // 默认肤色：按 2026-10-17 实测（手 Cb=110 / Cr=158）收紧，见 docs/camera_calibration_log.md
-  localparam logic [7:0] DEF_CB_LO = 8'd95;
-  localparam logic [7:0] DEF_CB_HI = 8'd125;
-  localparam logic [7:0] DEF_CR_LO = 8'd145;
-  localparam logic [7:0] DEF_CR_HI = 8'd180;
+  // 默认肤色：按 2026-10-17 实测（手 Cb=110 / Cr=158）并配合放宽的 MARGIN
+  localparam logic [7:0] DEF_CB_LO = 8'd86;
+  localparam logic [7:0] DEF_CB_HI = 8'd134;
+  localparam logic [7:0] DEF_CR_LO = 8'd134;
+  localparam logic [7:0] DEF_CR_HI = 8'd186;
 
   logic        vsync_d, btn_d;
   logic [31:0] cb_sum, cr_sum, npix;

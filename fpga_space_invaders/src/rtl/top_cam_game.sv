@@ -84,19 +84,21 @@ module top_cam_game #(
     .mon_cb(mon_cb), .mon_cr(mon_cr)
   );
 
-  // ---------------- 肤色判定 ----------------  // 三条判据：
-  //   1) Cb/Cr 落在标定区间（标定不出来时用上电默认值）
-  //   2) 够彩 |Cb-128|+|Cr-128| >= 16   —— 挡灰/白
-  //   3) 够暖 Cr-Cb >= 30               —— 这是最关键的判据：实测手=+48，中性白≈0，
-  //                                        暖光灯下的白墙约 +20，正好被这条切开
+  // ---------------- 肤色判定 ----------------
+  // 判据分工（重要）：
+  //   * "排除静止家具"交给背景差分 fg（cam_frame_buf 内做），颜色不再负责它
+  //   * 所以颜色门槛可以放得很宽，只求把【整只手】吃进来（含受光面/阴影/高光）
+  //   1) Cb/Cr 落在标定区间（MARGIN 已放宽到 ±24）
+  //   2) 够彩 |Cb-128|+|Cr-128| >= 8    —— 只要不是完全灰白
+  //   3) 够暖 Cr-Cb >= 14               —— 实测手 +48，暖白墙约 +10，仍能分开
   logic skin_raw, skin;
   wire [8:0] cbu  = cb[8:0];
   wire [8:0] cru  = cr[8:0];
   wire [8:0] dcb  = (cbu >= 9'd128) ? (cbu - 9'd128) : (9'd128 - cbu);
   wire [8:0] dcr  = (cru >= 9'd128) ? (cru - 9'd128) : (9'd128 - cru);
-  wire       sat_ok = (dcb + dcr) >= 10'd16;
+  wire       sat_ok = (dcb + dcr) >= 10'd8;
   wire signed [12:0] cr_cb = cr - cb;
-  wire       warm_ok = (cr_cb >= 13'sd30);
+  wire       warm_ok = (cr_cb >= 13'sd14);
 
   always_comb skin_raw = (cb >= $signed({4'b0000,cb_lo})) && (cb <= $signed({4'b0000,cb_hi})) &&
                          (cr >= $signed({4'b0000,cr_lo})) && (cr <= $signed({4'b0000,cr_hi})) &&

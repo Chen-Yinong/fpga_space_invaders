@@ -23,6 +23,8 @@ module tb_skin_contour;
   // 木桌：同色系但更暗（RGB888 165,121,90 -> Cb≈105 Cr≈152 Y≈130）
   // 颜色判据分不开（Cr-Cb=47，和手一样），只能靠背景差分
   localparam logic [15:0] DESK = {5'd20, 6'd30, 5'd11};
+  // 手背高光：RGB888 255,243,228 -> Cb≈119 Cr≈135（彩度低，最容易被判成"不是肤色"而打出洞）
+  localparam logic [15:0] HILITE = {5'd31, 6'd60, 5'd28};
 
   int hand_x = 200;          // 当前帧手的左边界（每帧变化 -> 制造运动）
 
@@ -58,9 +60,9 @@ module tb_skin_contour;
   wire [8:0] cru = cr[8:0];
   wire [8:0] dcb = (cbu >= 9'd128) ? (cbu - 9'd128) : (9'd128 - cbu);
   wire [8:0] dcr = (cru >= 9'd128) ? (cru - 9'd128) : (9'd128 - cru);
-  wire       sat_ok  = (dcb + dcr) >= 10'd16;
+  wire       sat_ok  = (dcb + dcr) >= 10'd8;
   wire signed [12:0] cr_cb = cr - cb;
-  wire       warm_ok = (cr_cb >= 13'sd30);
+  wire       warm_ok = (cr_cb >= 13'sd14);
   assign skin = calib_done &&
                 (cb >= $signed({4'b0000,cb_lo})) && (cb <= $signed({4'b0000,cb_hi})) &&
                 (cr >= $signed({4'b0000,cr_lo})) && (cr <= $signed({4'b0000,cr_hi})) &&
@@ -79,6 +81,10 @@ module tb_skin_contour;
   function automatic bit is_noise(input int x, input int y);
     return (((x * 7 + y * 13) % 211) == 0);
   endfunction
+  // 手背高光块：位于手内部（离边界足够远），模拟受光面
+  function automatic bit is_hilite(input int x, input int y);
+    return (x >= hand_x + 40) && (x < hand_x + 70) && (y >= 180) && (y < 230);
+  endfunction
 
   task automatic one_frame();
     @(negedge pclk) vsync <= 1'b1;
@@ -89,9 +95,10 @@ module tb_skin_contour;
       @(negedge pclk) href <= 1'b1;
       for (int x = 0; x < 640; x++) begin
         @(negedge pclk);
-        if (in_hand(x,y) || is_noise(x,y)) pixel <= HAND;
-        else if (y < 240)                pixel <= WALL;
-        else                             pixel <= DESK;
+        if      (in_hand(x,y) && is_hilite(x,y)) pixel <= HILITE;
+        else if (in_hand(x,y) || is_noise(x,y))  pixel <= HAND;
+        else if (y < 240)                        pixel <= WALL;
+        else                                     pixel <= DESK;
         pixel_en <= 1'b1;
       end
       @(negedge pclk) pixel_en <= 1'b0;
@@ -167,6 +174,12 @@ module tb_skin_contour;
     if (v === 24'hFFFFFF) begin $display("FAIL 手内部不应是白的"); errors++; end
     else $display("TB   手内部保留原色 OK (%06h)", v);
 
+    // 手背高光处（sy≈100, sx≈185）：低彩度区域不能被打成洞（否则轮廓会被切断）
+    read_px(185, 100, v);
+    if (v === 24'hFFFFFF) begin
+      $display("FAIL 手背高光被打成洞（内部出现轮廓）"); errors++;
+    end else $display("TB   手背高光未被挖洞 OK (%06h)", v);
+
     // 墙：不应被当成手
     read_px(20, 20, v);
     if (v === 24'hFFFFFF) begin $display("FAIL 墙被描边了"); errors++; end
@@ -184,8 +197,8 @@ module tb_skin_contour;
     if (mon_cr < 150 || mon_cr > 160) begin $display("FAIL 上屏 Cr 应≈155"); errors++; end
     @(negedge pclk) calib_btn <= 1'b0;
 
-    dump_ppm("D:/fpga/fpga_space_invaders/sim/contour_320x240.ppm", 320, 240, 1);
-    dump_ppm("D:/fpga/fpga_space_invaders/sim/contour_window.ppm",   160, 120, 2);
+    dump_ppm("D:/fpga/fpga_space_invaders/fpga_space_invaders/sim/contour_320x240.ppm", 320, 240, 1);
+    dump_ppm("D:/fpga/fpga_space_invaders/fpga_space_invaders/sim/contour_window.ppm",   160, 120, 2);
 
     if (errors == 0) $display("\n===== ALL PASS =====");
     else             $display("\n===== %0d FAIL =====", errors);
