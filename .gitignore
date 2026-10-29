@@ -1,10 +1,29 @@
-# 旧结构残留（可手动删除，不影响仓库）
-/build/
-/scripts/
-/sim/
-/.Xil/
-/vivado*.log
-/vivado*.backup.log
+# ===== 提交结构：构建产物（可由 build/build.tcl 一键重建，不入库）=====
+build/cam_game/
+build/*.log
+build/*.jou
+build/*.dcp
+*.runs/
+*.cache/
+*.hw/
+*.sim/
+*.gen/
+*.ip_user_files/
+.Xil/
+
+# ===== Python =====
 __pycache__/
 *.pyc
+.pytest_cache/
+
+# ===== Vivado 会话日志（根目录）=====
+/vivado*.log
+/vivado*.backup.log
 /vivado*.jou
+
+# ===== 系统/编辑器 =====
+Thumbs.db
+.DS_Store
+~$*
+# 构建会话日志
+build_*.log

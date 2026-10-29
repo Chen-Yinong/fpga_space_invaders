@@ -260,7 +260,10 @@ module game_core #(
             automatic logic [BUNK_H-1:0] col_bits = get_bunk_col(b, lx);
             // 检查从顶边 0 到 ly+2 范围内是否还有未销毁的掩体像素
             automatic logic [3:0] hit_end = (ly + 4'd2 >= BUNK_H) ? 4'(BUNK_H-1) : (ly + 4'd2);
-            if ((col_bits & ((12'h1 << (hit_end + 1'b1)) - 12'h1)) != '0) begin
+            // 掩码按 BUNK_H 参数化生成。原写法 (12'h1 << (hit_end+1'b1)) 在 BUNK_H>12 时
+            // 会因 12 位溢出、且 hit_end 只有 4 bit(15+1 回绕成 0) 而漏判命中、掩体下部打不烂。
+            automatic logic [BUNK_H-1:0] bunk_mask = {BUNK_H{1'b1}} >> (BUNK_H-1-int'(hit_end));
+            if ((col_bits & bunk_mask) != '0) begin
               eb_bhit[i] = 1'b1;
               eb_bid[i]  = b[1:0];
               eb_blx[i]  = lx;

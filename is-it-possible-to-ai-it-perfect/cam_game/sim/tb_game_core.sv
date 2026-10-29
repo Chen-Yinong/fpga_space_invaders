@@ -8,13 +8,13 @@ module tb_game_core;
   logic [PSLOTS-1:0]   pb_valid; logic [PSLOTS*9-1:0] pb_x, pb_y;
   logic [ESLOTS-1:0]   eb_valid; logic [ESLOTS*9-1:0] eb_x, eb_y;
   logic [54:0] enemy_alive; logic [8:0] enemy_x0, enemy_y0;
-  logic [BUNKERS*24*12-1:0] bunker_bits;
+  logic [BUNKERS*24*16-1:0] bunker_bits;
   logic [15:0] score; logic [3:0] lives; logic [1:0] state;
   logic ufo_active; logic [8:0] ufo_x;
   logic win;
   logic [1:0] stage; logic stage_show, stage_blink;
 
-  game_core #(.TICK_DIV(10), .PSLOTS(PSLOTS), .ESLOTS(ESLOTS)) dut (.*);
+  game_core #(.TICK_DIV(10), .PSLOTS(PSLOTS), .ESLOTS(ESLOTS), .BUNK_H(16), .LIVES_INIT(6)) dut (.*);
 
   always #5 clk_sys = ~clk_sys;
   integer errors=0;
@@ -31,9 +31,9 @@ module tb_game_core;
     repeat(5) @(negedge clk_sys); rst_n=1'b1; repeat(5) @(negedge clk_sys);
 
     check(state==2'd0, "reset -> IDLE");
-    check(lives==4'd10, "reset -> lives=10");
+    check(lives==4'd6, "reset -> lives=6");
     check(enemy_alive=={55{1'b1}}, "reset -> 55 enemies");
-    check(bunker_bits=={1152{1'b1}}, "reset -> bunkers full");
+    check(bunker_bits=={1536{1'b1}}, "reset -> bunkers full");
     check(stage==2'd1, "reset -> stage=1");
 
     btn_start=1'b1; wait_ticks(3); btn_start=1'b0; wait_ticks(2);
@@ -70,9 +70,9 @@ module tb_game_core;
     check(ufo_seen, "ufo spawned by LFSR");
 
     begin
-      int g=0; while (lives==4'd10 && g<2500) begin wait_ticks(1); g=g+1; end
+      int g=0; while (lives==4'd6 && g<2500) begin wait_ticks(1); g=g+1; end
     end
-    check(lives<4'd10, "enemy bullet hit -> lives down");
+    check(lives<4'd6, "enemy bullet hit -> lives down");
 
     if (errors==0) $display("\n==== TB_GAME ALL PASS ====");
     else           $display("\n==== TB_GAME FAILED: %0d ====", errors);

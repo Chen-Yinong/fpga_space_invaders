@@ -1,0 +1,64 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Thu Oct 29 18:15:28 2026
+| Host         : LAPTOP-LN931K86 running 64-bit major release  (build 9200)
+| Command      : report_clocks -file D:/fpga/fpga_space_invaders/build/report/22_clocks.rpt
+| Design       : top_cam_game
+| Device       : 7a100t-fgg484
+| Speed File   : -2  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Report
+
+
+Attributes
+  P: Propagated
+  G: Generated
+  A: Auto-derived
+  R: Renamed
+  V: Virtual
+  I: Inverted
+  S: Pin phase-shifted with Latency mode
+
+Clock               Period(ns)  Waveform(ns)    Attributes  Sources
+cam1_pclk           41.667      {0.000 20.833}  P           {cam1_pclk}
+sys_clk             20.000      {0.000 10.000}  P           {sys_clk}
+u_pll/inst/clk_in1  20.000      {0.000 10.000}  P           {u_pll/inst/clk_in1}
+clk_out1_hdmi_pll   40.000      {0.000 20.000}  P,G,A       {u_pll/inst/mmcm_adv_inst/CLKOUT0}
+clkfbout_hdmi_pll   20.000      {0.000 10.000}  P,G,A       {u_pll/inst/mmcm_adv_inst/CLKFBOUT}
+
+
+====================================================
+Generated Clocks
+====================================================
+
+Generated Clock     : clk_out1_hdmi_pll
+Master Source       : u_pll/inst/mmcm_adv_inst/CLKIN1
+Master Clock        : u_pll/inst/clk_in1
+Edges               : {1 2 3}
+Edge Shifts(ns)     : {0.000 10.000 20.000}
+Generated Sources   : {u_pll/inst/mmcm_adv_inst/CLKOUT0}
+
+Generated Clock     : clkfbout_hdmi_pll
+Master Source       : u_pll/inst/mmcm_adv_inst/CLKIN1
+Master Clock        : u_pll/inst/clk_in1
+Multiply By         : 1
+Generated Sources   : {u_pll/inst/mmcm_adv_inst/CLKFBOUT}
+
+
+
+====================================================
+User Uncertainty
+====================================================
+
+
+
+====================================================
+User Jitter
+====================================================
+
+Clock               Jitter(ns)
+u_pll/inst/clk_in1  0.200
+

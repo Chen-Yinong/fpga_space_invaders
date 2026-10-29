@@ -1,0 +1,12 @@
+==== cam_game_optiflowverison 构建指标（布线后，DCP 导出�?====
+WNS(ns): 3.428
+WHS(ns): 0.090
+LUT: 19758
+FF : 6796
+BRAM: 49
+DSP : 12
+clock u_pll/inst/clk_in1  period=20.000
+clock clkfbout_hdmi_pll  period=20.000
+clock clk_out1_hdmi_pll  period=40.000
+clock sys_clk  period=20.000
+clock cam1_pclk  period=41.667

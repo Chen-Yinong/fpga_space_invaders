@@ -236,6 +236,101 @@ artix-7
 
 ---
 
+---
+
+### 2026-10-25 | A（平台与集成） | DeepSeek Harness（qwen3.8-flash / glm-5.3 多模型）
+
+**目标**：给光流版游戏核心建立"能自己跑起来"的验证环境，并能判断核心逻辑是否正确。
+
+**提问（原样粘贴）**
+
+```
+教我怎么创建工程然后在vivado里面跑（附 game_core.sv 路径）
+```
+
+**AI 执行过程（可核查）**
+
+1. 读 `game_core.sv` 后指出：`TICK_DIV=833333`（50 MHz→60 Hz）下每拍要等 80 万时钟沿，
+   仿真必须用**参数覆盖**加速，否则跑不动；先做行为仿真再谈上板。
+2. 产出 `tb_game_core.sv`（`TICK_DIV=8`，含战况打印与关键信号监视），本机无 Vivado 时
+   改用 ModelSim 10.5b 批处理验证。
+3. 定位 4 个真实故障（见下表），最终编译 0 error、仿真 82 µs 跑完全流程
+   （得分 70→200、掉命 6→5、UFO 出现、暂停/恢复均触发）。
+
+**纠错轨迹（重要）**
+
+| # | 现象 | 根因 | 处理 |
+| --- | --- | --- | --- |
+| 1 | `vlog` 报 `sqlite3_open ... unable to open database file`，路径乱码 | 工作目录在中文用户名下，ModelSim 为 ANSI 构建 | 换到纯英文目录 `C:\msim_game` |
+| 2 | 极简模块也报 `Error loading design` + `FileWatch(fileName)` | `TEMP/TMP` 指向中文目录 | 把 `TEMP/TMP` 覆盖为英文子目录后正常 |
+| 3 | `vsim-3694`：`(.*)` 找不到 `clk_sys` 端口 | TB 里时钟命名 `clk`，与 DUT 端口 `clk_sys` 不匹配（该错误只在加载期报，编译期不报） | TB 信号改名为 `clk_sys` |
+| 4 | 仿真跑不完 | `TICK_DIV` 未覆盖 | 例化时 `#(.TICK_DIV(8))`，逻辑不变仅提速 |
+
+**产出物**：`sim/tb_game_core.sv`（初版）、ModelSim 仿真日志。
+
+---
+
+### 2026-10-29 | A/B/C（提交材料整理） | DeepSeek Harness（glm-5.3 / deepseek-v4.1-flash）
+
+**目标**：按官方《选题指南（AMD）》3.3 要求，把仓库整理成可提交结构，并补齐
+综合与实现报告、技能包、设计报告、架构图。
+
+**提问（原样粘贴，按时间顺序）**
+
+```
+我们现在交作品还缺什么东西还需要怎么弄
+你就直接写drawio的代码然后我打开drawio就能看的那种
+我的仓库在d盘啊D:\fpga\fpga_space_invaders
+11yue4hao截止
+ai协作的那个你是不是还没写
+```
+
+**人工决策（AI 只给选项，不替用户定）**
+
+| 决策点 | 选项 | 结论 |
+| --- | --- | --- |
+| 提交哪个版本 | 肤色版 / **光流版** / 两个都交 | **光流版**（`cam_game_optiflowverison`），肤色版保留为对照 |
+| 仓库结构 | 保持 `说明/` / **根目录建官方结构** / 重构 | **根目录建官方结构**，材料复制同步，原工作区不动 |
+
+**AI 执行过程（可核查）**
+
+1. 解析 28 页指南 PDF，确认所属赛道（3.3 自主选题·初级组）与提交清单；
+2. 在仓库根目录建立 `src/ sim/ build/ board/ data/ skill/ report/ docs/`，
+   源码从 `cam_game_optiflowverison/src/rtl` 复制（20 个文件），约束与 bit 从该工程取；
+3. 写 `build/build.tcl`（含 `hdmi_pll` IP 自动生成）并在真工程上跑一次完整构建，
+   产出 bitstream 3.65 MB 与 11 份报告；
+4. 跑仓库 testbench：**14/14 断言全 PASS**，日志存 `sim/sim_log.txt`；
+5. 产出 5 张 drawio 图（架构/数据流/时钟域/主FSM/手势FSM）、`skill/README.md`（8 条）、
+   `report/report.md`、`docs/*.md`，并重写根 `README.md`。
+
+**纠错轨迹（重要）**
+
+| # | AI 的错误 / 缺陷 | 发现方式 | 修正 |
+| --- | --- | --- | --- |
+| 1 | 一直在 C 盘副本 `C:\FPGA\space_invaders_fpga` 上作业 | 用户指出"我的仓库在d盘" | 全部材料迁到 `D:\fpga\fpga_space_invaders` 根结构 |
+| 2 | 依据"逐行注释版"副本写文档，与仓库真源码版本不一致 | 对比 `game_core.sv` 行数（377 vs 571） | 以仓库 `cam_game_optiflowverison/src/rtl` 为准重建 |
+| 3 | 注释版 XDC 行尾 `#` 注释导致 53 个引脚约束全部失效（DRC NSTD-1/UCIO-1，bitgen 失败） | bitstream 阶段报错 | 清理行尾注释并做**前后计数校验**（116 条命令/53 引脚零丢失） |
+| 4 | 生成 XDC 清理脚本时按整行注释处理，误把命令并进注释行 | 输出行数与命令数对不上 | 改为"非注释行截断首个 `#`"+ 计数断言，先恢复备份再重做 |
+| 5 | Vivado 批处理在布线后报告阶段卡死（子进程占用 15 GB、CPU 空转 20 min） | 日志停在 `Bitgen Completed` 不动 | 终止进程，改用已生成的 `*_routed.dcp` 单独导出报告 |
+| 6 | 用 `Set-Content -Encoding UTF8` 写 Tcl 带 BOM，Vivado 报 `invalid command name "锘縮et"` | 报告脚本第一行就失败 | 改用 `UTF8Encoding($false)` 无 BOM 写入 |
+| 7 | 根 `.gitignore` 含 `/build/ /sim/ /scripts/`，会把新提交目录整个排除 | `git check-ignore` 逐个验证 | 重写为只忽略构建产物，14 个必备文件全部可提交 |
+| 8 | `说明/docs/architecture.md` 是第零阶段规划稿（肤色版/AXI-Stream），与提交版不符 | 与 RTL 模块清单对照 | 在文首加版本声明，指向 `docs/architecture.md` 为准 |
+
+**采纳 / 否决**
+
+- 采纳：官方目录结构、"一条命令出 bit + 报告"、技能包按"真实踩坑"写（禁写教科书条目）；
+- 否决：同时提交两个版本（工作量翻倍，且指南推荐只选其一）；
+- 保留意见：`hold` 余量仅 +0.090 ns，报告中如实列为风险而非隐去。
+
+**产出物**：根目录提交结构（`src/ sim/ build/ board/ data/ skill/ report/ docs/`）、
+`build/build.tcl`、`build/report/`（11 份）、`sim/sim_log.txt`（14 PASS）、
+`skill/README.md`（8 条）、`report/report.md`、`docs/diagrams/*.drawio`。
+
+**待办**：板级照片/视频（10 项，清单见 `board/README.md`）、确认官网提交入口与截止时刻、
+`git commit/push`。
+
+---
+
 ## 变更记录
 
 | 版本 | 日期 | 变更内容 | 作者 |
@@ -246,3 +341,5 @@ artix-7
 | v1.3 | 2026-10-17 | 肤色标定方案落地：上电无默认肤色、key1 全屏采样、160×160 ROI、中点±12、合理性检查、小窗预览 | C/A |
 | v1.4 | 2026-10-17 | 复核目录重构、恢复构建源、相对化 xpr 路径、加入 sim_1，并记录最新构建验证 | C/A |
 | v1.5 | 2026-10-17 | 修复 top_cam_game 中 hand_pix 声明顺序，完成全量 xvlog 与重新构建验证 | C/A |
+| v1.6 | 2026-10-25 | 为光流版建立可仿真验证环境（TICK_DIV 参数覆盖），记录中文路径/隐式端口连线等 4 条纠错 | A |
+| v1.7 | 2026-10-29 | 官方 3.3 提交结构落地、真实构建（WNS +3.428ns）、14 断言全过、技能包 8 条、5 张架构图；记录 8 条纠错 | A/B/C |

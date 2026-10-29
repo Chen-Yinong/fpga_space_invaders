@@ -1,0 +1,26 @@
+# vsim -c -do "do.txt" -l sim_repo.txt work.tb_game_core 
+# Start time: 18:04:12 on Oct 29,2026
+# Loading sv_std.std
+# Loading work.tb_game_core
+# Loading work.game_core
+# do do.txt
+# [PASS] reset -> IDLE
+# [PASS] reset -> lives=6
+# [PASS] reset -> 55 enemies
+# [PASS] reset -> bunkers full
+# [PASS] reset -> stage=1
+# [PASS] start -> PLAY
+# [PASS] in play -> win=0
+# [PASS] auto-fire -> player bullets
+# [PASS] left -> player moved left
+# [PASS] right -> player moved right
+# [PASS] hit enemy -> score up
+# [PASS] enemy fired bullets
+# [PASS] ufo spawned by LFSR
+# [PASS] enemy bullet hit -> lives down
+# 
+# ==== TB_GAME ALL PASS ====
+# ** Note: $finish    : tb_game_core.sv(79)
+#    Time: 48700 ns  Iteration: 1  Instance: /tb_game_core
+# End time: 18:04:12 on Oct 29,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0

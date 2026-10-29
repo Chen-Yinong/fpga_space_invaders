@@ -1,5 +1,14 @@
 # 系统架构与数据流（Architecture）
 
+> ⚠️ **版本说明（2026-10-29 追加）**
+> 本文档是**第零阶段（WP0）的规划稿**，描述的是"肤色识别 + AXI-Stream 视频流水线"路线的
+> 目标架构（`cam_capture` / `axis_async_fifo` / `vision_pipeline` / `gesture_fsm` / `axi_lite_regs`）。
+>
+> **正式提交版本为光流版（`cam_game_optiflowverison`）**，其真实模块划分、数据流、
+> 状态机与时钟域请以 **仓库根目录 [`docs/architecture.md`](../../docs/architecture.md)** 为准
+> （含 5 张 drawio 图与 3 个时钟域 / 2 处 CDC 的完整说明）。
+> 本文档保留在本目录，用于呈现"从规划到落地"的设计演进过程。
+
 | 项目 | 内容 |
 | --- | --- |
 | 阶段 | 第零阶段（WP0）建立，后续持续更新 |

@@ -1,0 +1,378 @@
+<mxfile host="Electron" agent="space_invaders submission" pages="5">
+  <diagram id="arch" name="1-系统架构图">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t1" value="系统架构图 —— 摄像头光流控制的《太空侵略者》(top_cam_game)&lt;br&gt;野火升腾Pro XC7A100T-FGG484-2 · 三个时钟域横向排布 · 红色虚线 = 跨时钟域结构" style="text;html=1;fontSize=17;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="15" width="1250" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="bandA" value="摄像头域  cam1_pclk ≈ 24 MHz（独立异步时钟）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF2FB;strokeColor=#6c8ebf;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=13;fontStyle=1;fontColor=#2E6DA4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="1250" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ov" value="&lt;b&gt;ov7725_top 采集&lt;/b&gt;&lt;br&gt;SCCB 配置寄存器&lt;br&gt;DVP 8bit→RGB565" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="120" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_gray" value="&lt;b&gt;rgb2gray&lt;/b&gt;&lt;br&gt;RGB565→灰度 8bit&lt;br&gt;整数近似公式" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="120" width="140" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_flow" value="&lt;b&gt;lk_flow 光流核心&lt;/b&gt;&lt;br&gt;乒乓双缓冲+行缓冲&lt;br&gt;16×16 分块 LK&lt;br&gt;Q16 定点解算" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="120" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_fsm" value="&lt;b&gt;flow_fsm 手势判决&lt;/b&gt;&lt;br&gt;300 块投票→帧判定&lt;br&gt;漏桶积分 ±8" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="670" y="120" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_2ff" value="&lt;b&gt;2FF 同步器 ★CDC&lt;/b&gt;&lt;br&gt;pclk→50MHz&lt;br&gt;镜像反转(左右对调)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="120" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ram" value="&lt;b&gt;flow_tag_ram&lt;/b&gt;&lt;br&gt;★双口 RAM&lt;br&gt;pclk 写 / 25MHz 读" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="120" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="RGB565" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_ov" target="a_gray">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="灰度" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_gray" target="a_flow">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="(u,v)+能量" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_flow" target="a_fsm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="手势" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a_fsm" target="a_2ff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="note_cam" value="OV7725 模组：pclk / href / vsync / data[7:0] + SCCB 配置线（引脚见 XDC）" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="800" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="bandB" value="系统域  sys_clk = 50 MHz（游戏逻辑 · 60Hz 游戏节拍）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4FCF5;strokeColor=#82b366;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=13;fontStyle=1;fontColor=#2F7D4F;" vertex="1" parent="1">
+          <mxGeometry x="40" y="330" width="1250" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="b_deb" value="&lt;b&gt;按键消抖 ×2&lt;/b&gt;&lt;br&gt;key2 开始/暂停&lt;br&gt;key3 重开&lt;br&gt;5ms 计数消抖" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b_game" value="&lt;b&gt;game_core 游戏核心&lt;/b&gt;&lt;br&gt;主 FSM(4态) + 60Hz tick + 对象寄存器组&lt;br&gt;55 敌机 / 6+6 弹槽 / 4 掩体 / UFO / 3 关卡&lt;br&gt;组合碰撞判决 · 单拍回写" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="380" width="380" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b_snap" value="&lt;b&gt;信箱快照 ★CDC&lt;/b&gt;&lt;br&gt;toggle 每 4096 拍&lt;br&gt;整包复制 ~2 kbit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="380" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b_mmcm" value="&lt;b&gt;MMCM (hdmi_pll)&lt;/b&gt;&lt;br&gt;50MHz → 25MHz&lt;br&gt;locked 复位门控" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="920" y="380" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="start / restart" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="b_deb" target="b_game">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="游戏状态" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="b_game" target="b_snap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="同步手势（镜像反转）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontColor=#b85450;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1;entryX=0.75;entryY=0;" edge="1" parent="1" source="a_2ff" target="b_game">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bandC" value="显示域  clk_25m = 25 MHz（MMCM 由 50MHz 同源分频 · 640×480@60）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBF2;strokeColor=#d79b00;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=13;fontStyle=1;fontColor=#B35C00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="590" width="1250" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="c_vga" value="&lt;b&gt;vga_timing&lt;/b&gt;&lt;br&gt;800×525 计数&lt;br&gt;px,py,hs,vs,de" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="645" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c_render" value="&lt;b&gt;sprite_render&lt;/b&gt;&lt;br&gt;纯组合坐标比较&lt;br&gt;无需帧缓存" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="645" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c_pip" value="&lt;b&gt;画中画叠加&lt;/b&gt;&lt;br&gt;光流矢量场上色&lt;br&gt;160×120 右上角&lt;br&gt;红左/绿右/灰静止" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="480" y="645" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c_reg" value="&lt;b&gt;输出寄存&lt;/b&gt;&lt;br&gt;rgb/hs/vs/de&lt;br&gt;打一拍对齐" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="690" y="645" width="140" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c_disp" value="&lt;b&gt;HDMI 显示器&lt;/b&gt;&lt;br&gt;RGB888 24bit&lt;br&gt;640×480@60Hz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="645" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c_hdmi" value="&lt;b&gt;HDMI 芯片配置&lt;/b&gt;&lt;br&gt;ADV7511&lt;br&gt;DDC(I2C) 初始化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="645" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="坐标" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_vga" target="c_render">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="RGB" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_render" target="c_pip">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_pip" target="c_reg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="像素流+同步" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_reg" target="c_disp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="启动配置" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="c_hdmi" target="c_disp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="快照副本（防撕裂）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontColor=#b85450;labelBackgroundColor=#ffffff;dashed=1;exitX=0.25;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="b_snap" target="c_render">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" value="标签读取（25MHz 域）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontColor=#b85450;labelBackgroundColor=#ffffff;dashed=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="a_ram" target="c_pip">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="175" />
+              <mxPoint x="1310" y="555" />
+              <mxPoint x="560" y="555" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" value="25 MHz" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.72;entryY=0;" edge="1" parent="1" source="b_mmcm" target="bandC">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="dataflow" name="2-数据流图">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dt1" value="数据流图 —— 从像素流到手势，再到游戏画面&lt;br&gt;上排：光流处理链（摄像头域，左→右）；下排：游戏与显示链（右→左），整体呈蛇形" style="text;html=1;fontSize=17;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="15" width="1250" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="d_cam" value="&lt;b&gt;摄像头像素流&lt;/b&gt;&lt;br&gt;DVP 8bit×2 拍&lt;br&gt;拼成 RGB565（24MHz）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="d_gray" value="&lt;b&gt;rgb2gray&lt;/b&gt;&lt;br&gt;(R×77+G×150+B×29)&gt;&gt;8&lt;br&gt;灰度 8bit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="250" y="100" width="140" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="d_buf" value="&lt;b&gt;gray_framebuf&lt;/b&gt;&lt;br&gt;整帧乒乓双缓冲&lt;br&gt;上一帧 I(x,y,t-1)&lt;br&gt;当前帧 I(x,y,t)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="430" y="100" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="d_line" value="&lt;b&gt;flow_linebuf&lt;/b&gt;&lt;br&gt;延迟一行&lt;br&gt;左邻/上邻→梯度&lt;br&gt;Ix, Iy, It" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="100" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="d_lk" value="&lt;b&gt;lk_flow（16×16 块）&lt;/b&gt;&lt;br&gt;2×2 抽点采样&lt;br&gt;ΣA~E 累加 + div_pipe 除法&lt;br&gt;解 2×2 方程→(u,v) Q16" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="100" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="d_fsm" value="&lt;b&gt;flow_fsm&lt;/b&gt;&lt;br&gt;300 块投票&lt;br&gt;帧方向判定&lt;br&gt;漏桶积分" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="100" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="de1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d_cam" target="d_gray">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de2" value="cur_gray" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d_gray" target="d_buf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de3" value="两帧同时可读" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d_buf" target="d_line">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de4" value="像素+梯度" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d_line" target="d_lk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de5" value="每块 (u,v)+能量" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d_lk" target="d_fsm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d_gest" value="&lt;b&gt;手势跨域 2FF ★&lt;/b&gt;&lt;br&gt;pclk→50MHz&lt;br&gt;镜像反转" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="380" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="d_deb" value="&lt;b&gt;按键消抖&lt;/b&gt;&lt;br&gt;key2 / key3&lt;br&gt;5ms 稳定确认" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="530" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="d_game" value="&lt;b&gt;game_core（60Hz tick）&lt;/b&gt;&lt;br&gt;FSM 门控推进&lt;br&gt;对象寄存器组&lt;br&gt;组合碰撞判决+回写" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="380" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="d_snap" value="&lt;b&gt;信箱快照 ★&lt;/b&gt;&lt;br&gt;toggle 每 4096 拍&lt;br&gt;整包搬 ~2kbit&lt;br&gt;50→25MHz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="490" y="380" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="d_render" value="&lt;b&gt;sprite_render&lt;/b&gt;&lt;br&gt;px,py 坐标比较&lt;br&gt;组合逻辑出颜色" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="380" width="190" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="d_hdmi" value="&lt;b&gt;HDMI 输出&lt;/b&gt;&lt;br&gt;RGB888+同步&lt;br&gt;画中画叠加" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="160" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="de6" value="手势 gest_left/right" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d_fsm" target="d_gest">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de7" value="左右" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.25;" edge="1" parent="1" source="d_gest" target="d_game">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de8" value="start / restart" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.75;" edge="1" parent="1" source="d_deb" target="d_game">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de9" value="游戏状态" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="d_game" target="d_snap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de10" value="快照副本" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="d_snap" target="d_render">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de11" value="RGB888" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="d_render" target="d_hdmi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dnote1" value="关键数据规模：灰度帧 320×240×8bit 双缓冲 ｜ 光流 20×15=300 块 ｜ 游戏状态 ~2 kbit/次快照 ｜ 像素 640×480@60Hz" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="60" y="670" width="1200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="dnote2" value="控制流：手势（摄像头域产出，跨域同步）+ 按键（系统域消抖）→ game_core FSM 门控；显示侧只读快照，绝不反写。" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="60" y="700" width="1200" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="clockdom" name="3-时钟域与CDC">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="780" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ct1" value="时钟域划分与跨域协调（实际实现）&lt;br&gt;3 个时钟：摄像头域独立异步；系统域与显示域由同一 MMCM 同源分频，STA 按同步路径分析" style="text;html=1;fontSize=17;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="15" width="1200" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="c_blue" value="摄像头域  cam1_pclk ≈ 24 MHz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF2FB;strokeColor=#6c8ebf;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=13;fontStyle=1;fontColor=#2E6DA4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="390" height="570" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ov" value="&lt;b&gt;ov7725 采集 + rgb2gray&lt;/b&gt;&lt;br&gt;DVP 拼像素 + 灰度化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_flow" value="&lt;b&gt;lk_flow 光流 + flow_fsm 手势判决&lt;/b&gt;&lt;br&gt;分块解算 + 投票/漏桶" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="260" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_xdc" value="XDC 约束：&lt;br&gt;create_clock -period 41.667ns&lt;br&gt;CLOCK_DEDICATED_ROUTE FALSE&lt;br&gt;（允许非专用时钟布线）&lt;br&gt;&lt;br&gt;独立晶振，与其他域&lt;br&gt;无频率/相位关系" style="text;html=1;fontSize=10;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#6c8ebf;rounded=1;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="390" width="350" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="c_green" value="系统域  sys_clk = 50 MHz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4FCF5;strokeColor=#82b366;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=13;fontStyle=1;fontColor=#2F7D4F;" vertex="1" parent="1">
+          <mxGeometry x="560" y="90" width="640" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c_sys" value="&lt;b&gt;debounce ×2 + game_core&lt;/b&gt;&lt;br&gt;按键消抖 / 60Hz tick&lt;br&gt;主 FSM + 对象寄存器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="140" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="c_mmcm" value="&lt;b&gt;MMCM (hdmi_pll)&lt;/b&gt;&lt;br&gt;50→25MHz, locked" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="920" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_syncnote" value="同源分频：两域相位对齐&lt;br&gt;STA 按同步路径分析" style="text;html=1;fontSize=10;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#82b366;rounded=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="920" y="240" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_orange" value="显示域  clk_25m = 25 MHz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBF2;strokeColor=#d79b00;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=13;fontStyle=1;fontColor=#B35C00;" vertex="1" parent="1">
+          <mxGeometry x="560" y="400" width="640" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="c_disp" value="&lt;b&gt;vga_timing + sprite_render&lt;/b&gt;&lt;br&gt;640×480@60&lt;br&gt;坐标比较出颜色 + 画中画" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="450" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="c_hdmi3" value="&lt;b&gt;HDMI 输出&lt;/b&gt;&lt;br&gt;ADV7511 配置&lt;br&gt;RGB888 24bit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="920" y="450" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ce1" value="① 手势 2FF 同步器 ★&lt;br&gt;镜像反转 | set_false_path pclk→sys" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontColor=#b85450;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c_flow" target="c_sys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ce2" value="② 标签双口 RAM ★ pclk 写 / 25MHz 读（画中画）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontColor=#b85450;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.1;entryY=1;" edge="1" parent="1" source="c_flow" target="c_orange">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="235" y="700" />
+              <mxPoint x="624" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ce3" value="③ 信箱快照 ★ toggle 每 4096 拍（81.9µs）整包复制，防画面撕裂" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontColor=#b85450;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="c_sys" target="c_disp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ce4" value="25 MHz" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.7;entryY=0;" edge="1" parent="1" source="c_mmcm" target="c_orange">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cnote" value="复位策略：rst_n = sys_rst_n &amp; MMCM locked（异步复位、PLL 锁定后释放）；各域复位独立打拍。" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="720" width="1160" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="fsmmain" name="4-游戏主状态机">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ft1" value="游戏主状态机（2 bit / 4 状态）—— game_core 唯一控制 FSM" style="text;html=1;fontSize=17;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="15" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="f_restart" value="任意状态：btn_restart↑ → 强制全量复位回 S_PLAY（优先级最高）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F6F3FC;strokeColor=#9673a6;dashed=1;fontSize=11;fontColor=#5B4B8A;align=center;" vertex="1" parent="1">
+          <mxGeometry x="640" y="60" width="560" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f_idle" value="&lt;b&gt;S_IDLE&lt;/b&gt;&lt;br&gt;2&#39;d0" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="150" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="f_play" value="&lt;b&gt;S_PLAY&lt;/b&gt;&lt;br&gt;2&#39;d1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="150" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="f_pause" value="&lt;b&gt;S_PAUSE&lt;/b&gt;&lt;br&gt;2&#39;d2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="150" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="f_over" value="&lt;b&gt;S_OVER&lt;/b&gt;&lt;br&gt;2&#39;d3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="430" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="f_entry" value="" style="ellipse;fillColor=#333333;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="185" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="fe0" value="rst_n ↓ 上电复位" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="f_entry" target="f_idle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe1" value="btn_start↑&lt;br&gt;（全量复位）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" edge="1" parent="1" source="f_idle" target="f_play">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe2" value="btn_start↑（暂停）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" edge="1" parent="1" source="f_play" target="f_pause">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe3" value="btn_start↑（继续）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.65;entryX=1;entryY=0.65;" edge="1" parent="1" source="f_pause" target="f_play">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe4" value="lives==0 或 敌阵触底 → win=0&lt;br&gt;敌全灭且 stage==3 → win=1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.75;exitY=1;entryX=0.75;entryY=0;strokeColor=#b85450;" edge="1" parent="1" source="f_play" target="f_over">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe5" value="btn_start↑（全量复位）" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.25;exitY=0;entryX=0.25;entryY=1;strokeColor=#82b366;" edge="1" parent="1" source="f_over" target="f_play">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe6" value="敌全灭且 stage&lt;3 → stage_clear 序列 120 拍 → 关卡+1 后继续 PLAY" style="edgeStyle=none;curved=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#6c8ebf;exitX=0.5;exitY=0;entryX=0.85;entryY=0;" edge="1" parent="1" source="f_play" target="f_play">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="585" y="80" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fnote" value="迁移条件在 60Hz tick 使能沿采样；优先级：复位 &gt; btn_restart↑ &gt; btn_start↑ &gt; 游戏逻辑；Moore 型输出：state 直接门控游戏推进与渲染。" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="100" y="600" width="1100" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="fsmgesture" name="5-手势判决FSM">
+    <mxGraphModel dx="1334" dy="1031" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="680" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gt1" parent="1" style="text;html=1;fontSize=17;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F3864;" value="手势判决 FSM（flow_fsm）—— 三级顺序决策，摄像头时钟域" vertex="1">
+          <mxGeometry height="30" width="1300" x="40" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="g1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;第 1 级：逐块投票&lt;/b&gt;&lt;br&gt;可信块：energy≥E_MIN 且 |u|≥0.125px&lt;br&gt;u&lt;0 → cnt_left++（tag=1 左）&lt;br&gt;u&gt;0 → cnt_right++（tag=2 右）&lt;br&gt;同时写标签 RAM（300 块）&lt;br&gt;vsync 上升沿清零票数" vertex="1">
+          <mxGeometry height="170" width="380" x="60" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="g2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" value="&lt;b&gt;第 2 级：帧方向判定&lt;/b&gt;&lt;br&gt;frame_left = cnt_left≥2 且 ≥cnt_right+2&lt;br&gt;frame_right = 对称&lt;br&gt;票数不足或左右矛盾 → 本帧无效" vertex="1">
+          <mxGeometry height="170" width="380" x="510" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="g3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;第 3 级：漏桶积分&lt;/b&gt;&lt;br&gt;bucket ∈ [-8, +8]&lt;br&gt;帧左 → bucket-1 / 帧右 → +1&lt;br&gt;静止或矛盾 → 向 0 漏电&lt;br&gt;|bucket|≥3 才输出手势" vertex="1">
+          <mxGeometry height="170" width="380" x="960" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ge1" edge="1" parent="1" source="g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="g2" value="每帧结算（vsync）">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ge2" edge="1" parent="1" source="g2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="g3" value="帧方向">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g_ram" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="&lt;b&gt;标签 RAM → 画中画&lt;/b&gt;&lt;br&gt;pclk 写 / 25MHz 读&lt;br&gt;红=左 绿=右 灰=静止" vertex="1">
+          <mxGeometry height="100" width="380" x="60" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="g_2ff" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=11;" value="&lt;b&gt;→ 2FF 跨域 → 游戏&lt;/b&gt;&lt;br&gt;同步到 50MHz 域&lt;br&gt;镜像反转后控制炮台" vertex="1">
+          <mxGeometry height="100" width="380" x="510" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="g_out" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" value="&lt;b&gt;输出&lt;/b&gt;&lt;br&gt;gest_left / gest_right（否则静止）" vertex="1">
+          <mxGeometry height="100" width="380" x="960" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="ge3" edge="1" parent="1" source="g3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="g_out" value="阈值判决 |bucket|≥3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ge4" edge="1" parent="1" source="g_out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="g_2ff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ge5" edge="1" parent="1" source="g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="g_ram" value="写标签">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gnote" parent="1" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#555555;" value="设计动机：LK 光流单帧误判率高（U_MIN 仅 0.125 像素/帧，靠方向一致性而非幅值）；投票+漏桶把 300 块的弱证据聚合为稳定命令，漏桶天然保留静止态。" vertex="1">
+          <mxGeometry height="30" width="1300" x="40" y="560" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
