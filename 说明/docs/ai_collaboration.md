@@ -331,6 +331,45 @@ ai协作的那个你是不是还没写
 
 ---
 
+### 2026-10-30 | A（平台与集成） | DeepSeek Harness（glm-5.3）
+
+**目标**：把已完成的提交材料推送到远端仓库 `origin/main`。
+
+**提问（原样粘贴）**
+
+```
+我怎么push
+你能帮我push上去吗
+```
+
+**AI 执行过程（可核查）**
+
+1. 先自检推送前提：`user.name/email`、`credential.helper=manager`、`git ls-remote` 连通性、
+   待提交文件数（86 项 / 5.26 MB）、大文件（`.dcp` 已被 `*.runs/` 忽略）；
+2. 用户首次 push 报 `Recv failure: Connection was reset`，逐层定位到代理链路；
+3. 最终用「git 走 HTTP 代理 + GCM 用已缓存凭据」推成功：
+   `593f5bf..4045234  main -> main`；
+4. 推送后用 `git ls-tree -r origin/main` 逐项核对 13 个关键提交物，确认全部到位。
+
+**纠错轨迹（重要）**
+
+| # | 现象 | 根因 | 处理 |
+| --- | --- | --- | --- |
+| 1 | `Recv failure: Connection was reset` | Clash Verge 在跑（7897），但 **Windows 系统代理关闭**（`ProxyEnable=0`），git 走直连被重置 | 给 git 单独配代理 |
+| 2 | 配 HTTP 代理后 `schannel: failed to receive handshake` | 该时刻经 7897 到 github 的 CONNECT 不稳定（百度/Google 正常） | 换 `socks5h://`，`ls-remote` 通 |
+| 3 | `ServicePointManager 不支持具有 socks5h 方案的代理` | **GCM 是 .NET 程序，只支持 HTTP 代理**，不支持 socks5 | git 与 GCM 分别配置：git 传输可用 socks5h，GCM 需 HTTP 代理 |
+| 4 | `User cancelled dialog` / `could not read Username` | 我一度把 `credential.https://github.com.provider` 改成 `generic`，GCM 认证流程失效 | 撤销该配置，恢复默认 provider |
+| 5 | 误判"必须交互登录" | 用 `git credential fill` 验证后发现**凭据其实已缓存**（OAuth token，93 字符） | 直接复用缓存凭据，无需弹窗 |
+
+**采纳 / 否决**
+
+- 采纳：以 `git credential fill` 验证凭据可用性，再决定是否需要人工登录（避免让用户白等弹窗）；
+- 否决：把 PAT 明文写进 remote URL（会留在 `.git/config`，最终用缓存凭据解决，不必暴露令牌）。
+
+**产出物**：远端 `main` 更新到 `4045234`（86 文件）；全局 git 代理配置；本条目。
+
+---
+
 ## 变更记录
 
 | 版本 | 日期 | 变更内容 | 作者 |
@@ -343,3 +382,4 @@ ai协作的那个你是不是还没写
 | v1.5 | 2026-10-17 | 修复 top_cam_game 中 hand_pix 声明顺序，完成全量 xvlog 与重新构建验证 | C/A |
 | v1.6 | 2026-10-25 | 为光流版建立可仿真验证环境（TICK_DIV 参数覆盖），记录中文路径/隐式端口连线等 4 条纠错 | A |
 | v1.7 | 2026-10-29 | 官方 3.3 提交结构落地、真实构建（WNS +3.428ns）、14 断言全过、技能包 8 条、5 张架构图；记录 8 条纠错 | A/B/C |
+| v1.8 | 2026-10-30 | 提交材料推送远端（`4045234`，86 文件）；记录代理/GCM 认证 5 条纠错 | A |
