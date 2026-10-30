@@ -4,7 +4,7 @@
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.                   -->
 <!-- Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.   -->
 
-<Project Product="Vivado" Version="7" Minor="72" Path="D:/my_projects/备份/cam_game_perfecrVersion_backup/cam_game.xpr">
+<Project Product="Vivado" Version="7" Minor="72" Path="D:/fpga/fpga_space_invaders/is-it-possible-to-ai-it-perfect/cam_game/cam_game.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="8d5de35642a646c3bc45acc09f71cb05"/>

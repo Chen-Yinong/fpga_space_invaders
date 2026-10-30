@@ -25,7 +25,7 @@ module top_cam_game (
   output logic [23:0] hdmi_out_rgb
 );
   localparam int PSLOTS=6, ESLOTS=6, FORM_COLS=11, FORM_ROWS=5;
-  localparam int BUNKERS=4, BUNK_W=24, BUNK_H=12;
+  localparam int BUNKERS=4, BUNK_W=24, BUNK_H=16;
   localparam int WIN_X0=480, WIN_Y0=32, WIN_W=160, WIN_H=120;   // 画中画(显示坐标)
 
   // ---- 时钟与复位 ----
@@ -119,7 +119,8 @@ module top_cam_game (
   logic g_win; logic g_ufo_act; logic [8:0] g_ufo_x;
   logic [1:0] g_stage; logic g_stage_show, g_stage_blink;
 
-  game_core #(.TICK_DIV(833333), .PSLOTS(PSLOTS), .ESLOTS(ESLOTS)) u_game (
+  game_core #(.TICK_DIV(833333), .PSLOTS(PSLOTS), .ESLOTS(ESLOTS),
+            .BUNKERS(BUNKERS), .BUNK_W(BUNK_W), .BUNK_H(BUNK_H), .LIVES_INIT(6)) u_game (
     .clk_sys(sys_clk), .rst_n(rst_n),
     .btn_left(move_right), .btn_right(move_left), //觉得左右镜像这个不爽就对调这里
     .btn_start(btn_s), .btn_restart(btn_re),
@@ -178,7 +179,8 @@ module top_cam_game (
   );
 
   logic [23:0] game_rgb;
-  sprite_render #(.PSLOTS(PSLOTS), .ESLOTS(ESLOTS)) u_render (
+  sprite_render #(.PSLOTS(PSLOTS), .ESLOTS(ESLOTS),
+                .BUNKERS(BUNKERS), .BUNK_W(BUNK_W), .BUNK_H(BUNK_H)) u_render (
     .vid_x(px[9:0]), .vid_y(py[9:0]),
     .player_x(p_px), .player_visible(p_pvis),
     .pb_valid(p_pbv), .pb_x(p_pbx), .pb_y(p_pby),

@@ -6,7 +6,9 @@ module sprite_render #(
   parameter int ESLOTS = 6,
   parameter int FORM_COLS = 11,
   parameter int FORM_ROWS = 5,
-  parameter int BUNKERS = 4
+  parameter int BUNKERS = 4,
+  parameter int BUNK_W  = 24,
+  parameter int BUNK_H  = 16
 )(
   input  logic [9:0]  vid_x, vid_y,
   input  logic [8:0]  player_x,
@@ -20,7 +22,7 @@ module sprite_render #(
   input  logic [FORM_COLS*FORM_ROWS-1:0] enemy_alive,
   input  logic [8:0]  enemy_x0,
   input  logic [8:0]  enemy_y0,
-  input  logic [BUNKERS*24*12-1:0] bunker_bits,
+  input  logic [BUNKERS*BUNK_W*BUNK_H-1:0] bunker_bits,
   input  logic [15:0] score,
   input  logic [3:0]  lives,
   input  logic [1:0]  state,
@@ -32,7 +34,7 @@ module sprite_render #(
   input  logic        stage_blink,
   output logic [23:0] rgb
 );
-  localparam int BUNK_W = 24, BUNK_H = 12, BUNK_Y = 180;
+  localparam int BUNK_Y = 180;
   localparam int BUNK_X [0:BUNKERS-1] = '{32, 108, 184, 260};
   localparam int CELL_W = 14, CELL_H = 10, COL_GAP = 18, ROW_GAP = 14;
   localparam int PLAYER_Y = 220, PLAYER_HALF = 8;
