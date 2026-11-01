@@ -151,7 +151,7 @@ module top_cam_dual (
   wire frame_tick = cam1_vsync && !vsync_d1;
 
   logic dir_left_p, dir_right_p;
-  dir_judge u_dir (
+  dir_judge_acc u_dir (  // 慢速积分版：慢手也能动（见 dir_judge_acc.sv 顶部注释）
     .pclk(cam1_pclk), .rst_n(rst_n), .frame_tick(frame_tick),
     .valid(centroid_valid), .dx(centroid_dx),
     .move_left(dir_left_p), .move_right(dir_right_p)

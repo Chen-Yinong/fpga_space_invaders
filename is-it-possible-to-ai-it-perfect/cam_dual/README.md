@@ -9,7 +9,9 @@
 | 文件 | 说明 |
 | --- | --- |
 | `rtl/top_cam_dual.sv` | 新的顶层（唯一新增的 RTL，其余模块全部复用仓库现有文件） |
+| `rtl/dir_judge_acc.sv` | 质心模式方向判定增强版（慢速积分，见 §5） |
 | `rtl/dual_extra.xdc` | 补充约束：key0 引脚（V17）+ `set_false_path sys_clk → cam1_pclk` |
+| `sim/tb_dir_judge_acc.sv` | dir_judge_acc 的 testbench（8 项检查，xsim 全过） |
 | `top_cam_dual.bit` | 最终比特流（已在板上验证烧录） |
 | `build/report/*.rpt` | 综合/实现/时序/DRC/方法论报告（与上方比特流同一次构建产出） |
 | `build_dual.tcl` | 从零建工程 + 综合 + 实现 + 出比特流 + 报告 |
@@ -35,6 +37,22 @@ led_right 亮 = 肤色质心模式
 切换时整局复位是**故意的**：两个前端的坐标/手感不同，带着残局切换
 容易出诡异状态，干净重来最稳。
 
+### 2.1 质心模式的慢速判定（dir_judge_acc）
+
+原版 `dir_judge` 只看**单帧** |dx| > 9px 才进移动状态，慢速挥手永远进不了门。
+本版换成 `rtl/dir_judge_acc.sv`：带泄漏的累积器 `acc ← acc − acc/8 + dx`
+每帧积累慢漂移，静止抖动是零均值不积累。速度档位：
+
+| 手速（px/帧 @30fps） | 飞机响应 |
+| --- | --- |
+| > 9（>270px/s） | 立即、连续（原行为不变） |
+| 4 ~ 9 | 短暂积累后连续移动 |
+| 2 ~ 4 | 脉冲式慢爬（移动 3~4 帧 + 积累若干帧循环） |
+| < 2 | 静止（抖动保护，±3px 抖动离门限 4.6σ） |
+
+调参在 `dir_judge_acc.sv` 参数表：误触发调大 `TH_ACC`，嫌钝调大 `ACC_SH`。
+有 `sim/tb_dir_judge_acc.sv` 回归（8 项检查全过）。
+
 ## 3. 构建与烧录
 
 ```bash
@@ -52,7 +70,8 @@ DUAL_PROJ=cam_dual2 D:/fpga/2026.1/Vivado/bin/vivado.bat -mode batch -source is-
    `sprite_render.sv`、`vga_timing.sv`、`debounce.sv`、板级驱动……），不能整目录合并。
    做法：共享部分全部用仓库根 `src/`（交付版，BUNK_H=12），只额外引入质心版
    **独有的 4 个模块**：`rgb2ycrcb.sv`、`bin_frame_buf.sv`、`centroid_calc.sv`、`dir_judge.sv`
-   （取自 `is-it-possible-to-ai-it-perfect/cam_game/src/rtl/`）。
+   （取自 `is-it-possible-to-ai-it-perfect/cam_game/src/rtl/`）；
+   其中 `dir_judge` 实际已被本目录的 `dir_judge_acc.sv` 取代（慢速判定增强，§2.1）。
 2. **时序冻结**：不改 `vga_timing`（800×525 @ 25.175MHz ≈ 59.5Hz）、不改
    `TICK_DIV=833333`（游戏节拍 60Hz）、不改任何速度常量，merged 版本的游戏手感与
    已交付版本逐拍一致。
@@ -65,12 +84,14 @@ DUAL_PROJ=cam_dual2 D:/fpga/2026.1/Vivado/bin/vivado.bat -mode batch -source is-
 | --- | --- | --- | --- | --- | --- | --- |
 | 光流单版 | 16265 | 25.65% | 48.5 | 12 | +3.428 | 队友报告 |
 | 质心单版 | 16774 | 26.46% | 3 | 0 | — | 队友报告 |
-| **合并双模版** | **17744** | **27.99%** | **51.5** | **12** | **+0.988** | 0 违例端点 |
+| 合并双模版 v1 | 17744 | 27.99% | 51.5 | 12 | +0.988 | 0 违例端点 |
+| **合并+慢速判定** | **17802** | **28.08%** | **51.5** | **12** | **+0.576** | 0 违例端点 |
 
-- 相比光流单版只多 **+1479 LUT（+2.3 个百分点）、+3 BRAM**，
+- 相比光流单版只多 **+1537 LUT（+2.4 个百分点）、+3 BRAM**，
   **远低于**“两版叠加”的悲观估计（33039 LUT / 52.1%）。
   原因是两版共享 `game_core`+`sprite_render`+信箱+2FF，新增的只是质心前端本身。
-- WNS +0.988 为最终交付比特流（`key0` 任意时刻切换版）的实测值；
+- WNS 从 +0.988 降到 +0.576：`dir_judge_acc` 在 `cam1_pclk` 域加了 14 位符号
+  累加/比较逻辑，判定路径变长，仍是 0 违例；
   质心前端判定路径较长，sys_clk 域裕量比单版（+3.428）低，改 `game_core` 前需重查时序。
 
 ## 6. 踩到的坑（值得写进报告）

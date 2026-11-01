@@ -42,7 +42,8 @@ lappend srcs {*}[glob -nocomplain -directory $HDMIDIR -types f *.v]
 foreach f {rgb2ycrcb.sv bin_frame_buf.sv centroid_calc.sv dir_judge.sv} {
     lappend srcs [file join $CENTDIR $f]
 }
-lappend srcs [file join $MERGEDIR rtl top_cam_dual.sv]
+# cam_dual 自己的 RTL（top_cam_dual.sv + dir_judge_acc.sv 等，整目录加入）
+lappend srcs {*}[glob -nocomplain -directory [file join $MERGEDIR rtl] -types f *.sv]
 if {[llength $srcs] == 0} { error "没有找到源文件" }
 add_files -fileset sources_1 $srcs
 set_property top $TOP [current_fileset]

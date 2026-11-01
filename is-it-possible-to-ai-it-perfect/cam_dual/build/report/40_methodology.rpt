@@ -1,14 +1,14 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
----------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
-| Date         : Sun Nov  1 12:09:16 2026
+| Date         : Sun Nov  1 12:52:57 2026
 | Host         : strange running 64-bit major release  (build 9200)
-| Command      : report_methodology -file D:/fpga/fpga_space_invaders/merge/build/report/40_methodology.rpt
+| Command      : report_methodology -file D:/fpga/fpga_space_invaders/is-it-possible-to-ai-it-perfect/cam_dual/build/report/40_methodology.rpt
 | Design       : top_cam_dual
 | Device       : xc7a100tfgg484-2
 | Speed File   : -2
 | Design State : Fully Routed
----------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------
 
 Report Methodology
 
@@ -431,7 +431,7 @@ u_cam/ov7725_data_inst/data_out_reg_reg[14]/CLR,
 u_cam/ov7725_data_inst/data_out_reg_reg[15]/CLR,
 u_cam/ov7725_data_inst/data_out_reg_reg[1]/CLR,
 u_cam/ov7725_data_inst/data_out_reg_reg[2]/CLR
- (the first 15 of 35 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
+ (the first 15 of 34 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
 Related violations: <none>
 
 LUTAR-1#2 Warning
@@ -440,7 +440,7 @@ LUT cell u_cent/FSM_onehot_state[15]_i_3__0, with 2 or more inputs, drives async
 cx1_reg[5]/CLR, cx1_reg[6]/CLR, cx1_reg[7]/CLR, cx1_reg[8]/CLR,
 cx1_reg[9]/CLR, cx2_reg[2]/CLR, cx2_reg[3]/CLR, cx2_reg[4]/CLR,
 cx2_reg[5]/CLR, cx2_reg[6]/CLR, cx2_reg[7]/CLR
- (the first 15 of 663 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
+ (the first 15 of 620 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
 Related violations: <none>
 
 LUTAR-1#3 Warning
