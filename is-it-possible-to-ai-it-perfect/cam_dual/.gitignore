@@ -1,0 +1,6 @@
+# Vivado 本地工程目录（用 build_dual.tcl 可随时重建）
+build/cam_dual*/
+
+# 日志
+*.log
+*.jou

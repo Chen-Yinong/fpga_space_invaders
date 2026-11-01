@@ -1,0 +1,808 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sun Nov  1 12:09:16 2026
+| Host         : strange running 64-bit major release  (build 9200)
+| Command      : report_methodology -file D:/fpga/fpga_space_invaders/merge/build/report/40_methodology.rpt
+| Design       : top_cam_dual
+| Device       : xc7a100tfgg484-2
+| Speed File   : -2
+| Design State : Fully Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Report Methodology
+
+Table of Contents
+-----------------
+1. REPORT SUMMARY
+2. REPORT DETAILS
+
+1. REPORT SUMMARY
+-----------------
+            Netlist: netlist
+          Floorplan: impl_1
+      Design limits: <entire design considered>
+             Max checks: <unlimited>
+             Checks found: 147
++-----------+------------------+------------------------------------------------------+--------+
+| Rule      | Severity         | Description                                          | Checks |
++-----------+------------------+------------------------------------------------------+--------+
+| TIMING-4  | Critical Warning | Invalid primary clock redefinition on a clock tree   | 1      |
+| TIMING-6  | Critical Warning | No common primary clock between related clocks       | 1      |
+| TIMING-7  | Critical Warning | No common node between related clocks                | 1      |
+| TIMING-17 | Critical Warning | Non-clocked sequential cell                          | 70     |
+| TIMING-27 | Critical Warning | Invalid primary clock on hierarchical pin            | 1      |
+| LUTAR-1   | Warning          | LUT drives async reset alert                         | 3      |
+| SYNTH-6   | Warning          | Timing of a RAM block might be sub-optimal           | 35     |
+| SYNTH-10  | Warning          | Wide multiplier                                      | 12     |
+| TIMING-10 | Warning          | Missing property on synchronizer                     | 1      |
+| TIMING-18 | Warning          | Missing input or output delay                        | 16     |
+| TIMING-20 | Warning          | Non-clocked latch                                    | 4      |
+| TIMING-28 | Warning          | Auto-derived clock referenced by a timing constraint | 1      |
+| LATCH-1   | Advisory         | Existing latches in the design                       | 1      |
++-----------+------------------+------------------------------------------------------+--------+
+
+2. REPORT DETAILS
+-----------------
+TIMING-4#1 Critical Warning
+Invalid primary clock redefinition on a clock tree  
+Invalid clock redefinition on a clock tree. The primary clock u_pll/inst/clk_in1 is defined downstream of clock sys_clk and overrides its insertion delay and/or waveform definition
+Related violations: <none>
+
+TIMING-6#1 Critical Warning
+No common primary clock between related clocks  
+The clocks sys_clk and clk_out1_hdmi_pll are related (timed together) but they have no common primary clock. The design could fail in hardware. To find a timing path between these clocks, run the following command: report_timing -from [get_clocks sys_clk] -to [get_clocks clk_out1_hdmi_pll]
+Related violations: <none>
+
+TIMING-7#1 Critical Warning
+No common node between related clocks  
+The clocks sys_clk and clk_out1_hdmi_pll are related (timed together) but they have no common node. The design could fail in hardware. To find a timing path between these clocks, run the following command: report_timing -from [get_clocks sys_clk] -to [get_clocks clk_out1_hdmi_pll]
+Related violations: <none>
+
+TIMING-17#1 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#2 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[10]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#3 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[11]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#4 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[12]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#5 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[13]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#6 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[14]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#7 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[15]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#8 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#9 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/FSM_onehot_state_reg[6]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#10 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/cnt_bit_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#11 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/cnt_bit_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#12 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/cnt_bit_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#13 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/cnt_i2c_clk_en_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#14 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/cnt_i2c_clk_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#15 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/cnt_i2c_clk_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#16 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/i2c_ctrl_inst/i2c_end_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#17 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cfg_done_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#18 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cfg_start_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#19 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#20 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#21 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#22 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[3]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#23 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[4]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#24 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[5]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#25 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[6]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#26 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[7]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#27 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[8]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#28 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/cnt_wait_reg[9]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#29 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#30 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#31 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#32 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[3]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#33 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[4]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#34 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[5]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#35 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_cam/ov7725_cfg_inst/reg_num_reg_rep[6]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#36 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cfg_done_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#37 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cfg_start_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#38 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#39 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#40 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#41 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[3]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#42 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[4]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#43 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[5]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#44 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[6]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#45 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[7]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#46 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[8]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#47 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/cnt_wait_reg[9]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#48 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#49 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#50 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#51 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[3]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#52 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[4]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#53 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[5]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#54 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/hdmi_cfg_inst/reg_num_reg[6]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#55 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#56 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[10]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#57 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[11]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#58 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[12]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#59 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[13]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#60 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[14]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#61 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[15]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#62 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#63 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/FSM_onehot_state_reg[6]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#64 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/cnt_bit_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#65 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/cnt_bit_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#66 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/cnt_bit_reg[2]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#67 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/cnt_i2c_clk_en_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#68 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/cnt_i2c_clk_reg[0]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#69 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/cnt_i2c_clk_reg[1]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#70 Critical Warning
+Non-clocked sequential cell  
+The clock pin u_hdmi_i2c/i2c_ctrl_inst/i2c_end_reg/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-27#1 Critical Warning
+Invalid primary clock on hierarchical pin  
+A primary clock u_pll/inst/clk_in1 is created on an inappropriate internal pin u_pll/inst/clk_in1. It is not recommended to create a primary clock on a hierarchical pin when its driver pin has a fanout connected to multiple clock pins
+Related violations: <none>
+
+LUTAR-1#1 Warning
+LUT drives async reset alert  
+LUT cell u_cam/ov7725_cfg_inst/data_flag_i_2, with 2 or more inputs, drives asynchronous preset/clear pin(s) u_cam/ov7725_data_inst/cnt_pic_reg[0]/CLR,
+u_cam/ov7725_data_inst/cnt_pic_reg[1]/CLR,
+u_cam/ov7725_data_inst/cnt_pic_reg[2]/CLR,
+u_cam/ov7725_data_inst/cnt_pic_reg[3]/CLR,
+u_cam/ov7725_data_inst/data_flag_dly1_reg/CLR,
+u_cam/ov7725_data_inst/data_flag_reg/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[0]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[10]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[11]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[12]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[13]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[14]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[15]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[1]/CLR,
+u_cam/ov7725_data_inst/data_out_reg_reg[2]/CLR
+ (the first 15 of 35 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
+Related violations: <none>
+
+LUTAR-1#2 Warning
+LUT drives async reset alert  
+LUT cell u_cent/FSM_onehot_state[15]_i_3__0, with 2 or more inputs, drives asynchronous preset/clear pin(s) bus_toggle_reg/CLR, cx1_reg[2]/CLR, cx1_reg[3]/CLR, cx1_reg[4]/CLR,
+cx1_reg[5]/CLR, cx1_reg[6]/CLR, cx1_reg[7]/CLR, cx1_reg[8]/CLR,
+cx1_reg[9]/CLR, cx2_reg[2]/CLR, cx2_reg[3]/CLR, cx2_reg[4]/CLR,
+cx2_reg[5]/CLR, cx2_reg[6]/CLR, cx2_reg[7]/CLR
+ (the first 15 of 663 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
+Related violations: <none>
+
+LUTAR-1#3 Warning
+LUT drives async reset alert  
+LUT cell u_game/enemy_alive[54]_i_2, with 2 or more inputs, drives asynchronous preset/clear pin(s) u_game/btn_restart_d_reg/CLR, u_game/btn_start_d_reg/CLR,
+u_game/bunker_bits_reg[0]/PRE, u_game/bunker_bits_reg[1000]/PRE,
+u_game/bunker_bits_reg[1001]/PRE, u_game/bunker_bits_reg[1002]/PRE,
+u_game/bunker_bits_reg[1003]/PRE, u_game/bunker_bits_reg[1004]/PRE,
+u_game/bunker_bits_reg[1005]/PRE, u_game/bunker_bits_reg[1006]/PRE,
+u_game/bunker_bits_reg[1007]/PRE, u_game/bunker_bits_reg[1008]/PRE,
+u_game/bunker_bits_reg[1009]/PRE, u_game/bunker_bits_reg[100]/PRE,
+u_game/bunker_bits_reg[1010]/PRE (the first 15 of 1788 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
+Related violations: <none>
+
+SYNTH-6#1 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_buf/mem_reg, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#2 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_buf/mem_reg_1, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#3 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#4 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_0__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#5 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_1, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#6 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_1__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#7 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_2, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#8 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_2__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#9 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_3, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#10 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_3__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#11 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_4, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#12 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_4__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#13 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_5, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#14 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_5__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#15 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_6, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#16 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_6__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#17 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_7, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#18 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem0_reg_1_7__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#19 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#20 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_0__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#21 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_1, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#22 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_1__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#23 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_2, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#24 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_2__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#25 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_3, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#26 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_3__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#27 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_4, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#28 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_4__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#29 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_5, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#30 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_5__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#31 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_6, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#32 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_6__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#33 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_7, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#34 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_flow/u_fbuf/mem1_reg_1_7__0, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-6#35 Warning
+Timing of a RAM block might be sub-optimal  
+The timing for the instance u_fsm/u_tag/mem_reg, implemented as a RAM block, might be sub-optimal as no output register was merged into the block.
+Related violations: <none>
+
+SYNTH-10#1 Warning
+Wide multiplier  
+Detected multiplier at u_flow/det_c0 of size 9x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#2 Warning
+Wide multiplier  
+Detected multiplier at u_flow/det_c0__0 of size 9x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#3 Warning
+Wide multiplier  
+Detected multiplier at u_flow/det_c0__1 of size 18x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#4 Warning
+Wide multiplier  
+Detected multiplier at u_flow/det_c0__2 of size 18x9, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#5 Warning
+Wide multiplier  
+Detected multiplier at u_flow/det_c0__3 of size 18x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#6 Warning
+Wide multiplier  
+Detected multiplier at u_flow/det_c0__4 of size 18x9, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#7 Warning
+Wide multiplier  
+Detected multiplier at u_flow/numu_c0 of size 9x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#8 Warning
+Wide multiplier  
+Detected multiplier at u_flow/numu_c0__0 of size 9x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#9 Warning
+Wide multiplier  
+Detected multiplier at u_flow/numu_c0__1 of size 18x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#10 Warning
+Wide multiplier  
+Detected multiplier at u_flow/numu_c0__2 of size 18x9, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#11 Warning
+Wide multiplier  
+Detected multiplier at u_flow/numu_c0__3 of size 18x18, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+SYNTH-10#12 Warning
+Wide multiplier  
+Detected multiplier at u_flow/numu_c0__4 of size 18x9, it is decomposed from a wide multipler into 4 DSP blocks.
+Related violations: <none>
+
+TIMING-10#1 Warning
+Missing property on synchronizer  
+One or more logic synchronizer has been detected between 2 clock domains but the synchronizer does not have the property ASYNC_REG defined on one or both registers. It is recommended to run report_cdc for a complete and detailed CDC coverage
+Related violations: <none>
+
+TIMING-18#1 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[0] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#2 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[1] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#3 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[2] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#4 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[3] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#5 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[4] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#6 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[5] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#7 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[6] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#8 Warning
+Missing input or output delay  
+An input delay is missing on cam1_data[7] relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#9 Warning
+Missing input or output delay  
+An input delay is missing on cam1_href relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#10 Warning
+Missing input or output delay  
+An input delay is missing on cam1_vsync relative to the rising and/or falling clock edge(s) of cam1_pclk.
+Related violations: <none>
+
+TIMING-18#11 Warning
+Missing input or output delay  
+An input delay is missing on key0 relative to the rising and/or falling clock edge(s) of sys_clk.
+Related violations: <none>
+
+TIMING-18#12 Warning
+Missing input or output delay  
+An input delay is missing on key2 relative to the rising and/or falling clock edge(s) of sys_clk.
+Related violations: <none>
+
+TIMING-18#13 Warning
+Missing input or output delay  
+An input delay is missing on key3 relative to the rising and/or falling clock edge(s) of sys_clk.
+Related violations: <none>
+
+TIMING-18#14 Warning
+Missing input or output delay  
+An input delay is missing on sys_rst_n relative to the rising and/or falling clock edge(s) of cam1_pclk, sys_clk.
+Related violations: <none>
+
+TIMING-18#15 Warning
+Missing input or output delay  
+An output delay is missing on led_left relative to the rising and/or falling clock edge(s) of sys_clk.
+Related violations: <none>
+
+TIMING-18#16 Warning
+Missing input or output delay  
+An output delay is missing on led_right relative to the rising and/or falling clock edge(s) of sys_clk.
+Related violations: <none>
+
+TIMING-20#1 Warning
+Non-clocked latch  
+The latch u_cam/i2c_ctrl_inst/ack_reg cannot be properly analyzed as its control pin u_cam/i2c_ctrl_inst/ack_reg/G is not reached by a timing clock
+Related violations: <none>
+
+TIMING-20#2 Warning
+Non-clocked latch  
+The latch u_cam/i2c_ctrl_inst/i2c_sda_reg_reg cannot be properly analyzed as its control pin u_cam/i2c_ctrl_inst/i2c_sda_reg_reg/G is not reached by a timing clock
+Related violations: <none>
+
+TIMING-20#3 Warning
+Non-clocked latch  
+The latch u_hdmi_i2c/i2c_ctrl_inst/ack_reg cannot be properly analyzed as its control pin u_hdmi_i2c/i2c_ctrl_inst/ack_reg/G is not reached by a timing clock
+Related violations: <none>
+
+TIMING-20#4 Warning
+Non-clocked latch  
+The latch u_hdmi_i2c/i2c_ctrl_inst/i2c_sda_reg_reg cannot be properly analyzed as its control pin u_hdmi_i2c/i2c_ctrl_inst/i2c_sda_reg_reg/G is not reached by a timing clock
+Related violations: <none>
+
+TIMING-28#1 Warning
+Auto-derived clock referenced by a timing constraint  
+The auto-derived clock clk_out1_hdmi_pll is referenced by name inside timing constraint (see constraint position 5 in the Timing Constraint window in Vivado IDE). It is recommended to reference an auto-derived clock by the pin name attached to the clock: get_clocks -of_objects [get_pins u_pll/inst/mmcm_adv_inst/CLKOUT0]
+Related violations: <none>
+
+LATCH-1#1 Advisory
+Existing latches in the design  
+There are 4 latches found in the design. Inferred latches are often the result of HDL coding mistakes, such as incomplete if or case statements.
+Related violations: <none>
+
+
